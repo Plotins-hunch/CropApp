@@ -1,0 +1,55 @@
+/* src/styles/tiles.css */
+.field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, var(--tile-size));
+    grid-auto-rows: var(--tile-size);
+    grid-gap: 0;
+    width: fit-content;
+  }
+  
+  .tile {
+    width: var(--tile-size);
+    height: var(--tile-size);
+    position: relative;
+    transition: transform 0.1s ease;
+  }
+  
+  .tile:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    outline: 2px solid rgba(255, 250, 205, 0.8);
+  }
+  
+  /* Grundlegende Kacheltypen */
+  .tile-dirt {
+    background-color: var(--stardew-dirt);
+    background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4z' fill='%238a6837' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+  
+  .tile-grass {
+    background-color: var(--stardew-green);
+    background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 4h4v4H0V4zm8 0h4v4H8V4zm8 0h4v4h-4V4zm8 8h4v4h-4v-4zm0-8h4v4h-4V4z' fill='%23a9db7a' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+  
+  .tile-water {
+    background-color: var(--stardew-water);
+    background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h32v2H0V0zm0 8h32v2H0V8zm0 8h32v2H0v-2zm0 8h32v2H0v-2zm0 8h32v2H0v-2z' fill='%233e97ae' fill-opacity='0.3' fill-rule='evenodd'/%3E%3C/svg%3E");
+    animation: water-ripple 2s infinite ease-in-out;
+  }
+  
+  .tile-crops-corn {
+    background-color: var(--stardew-dirt);
+    position: relative;
+  }
+  
+  .tile-crops-corn::after {
+    content: '';
+    position: absolute;
+    top: -16px;
+    left: 4px;
+    width: 24px;
+    height: 32px;
+    background-color: var(--stardew-green-light);
+    clip-path: polygon(50% 0%, 25% 50%, 50% 100%, 75% 50%);
+    animation: subtle-sway 3s infinite ease-in-out;
+  }

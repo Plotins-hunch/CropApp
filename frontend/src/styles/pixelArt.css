@@ -1,0 +1,57 @@
+/* src/styles/pixelArt.css */
+:root {
+    /* Environment Colors */
+    --stardew-green-light: #a9db7a;
+    --stardew-green: #58A63C;
+    --stardew-green-dark: #3D7D27;
+    --stardew-dirt: #b98d4f;
+    --stardew-dirt-dark: #8a6837;
+    --stardew-dirt-darkest: #5c4425;
+    --stardew-water: #5dbcd2;
+    --stardew-water-dark: #3e97ae;
+    --stardew-blue-dark: #274679;
+    --stardew-sky-day: #88d9e6;
+    --stardew-sky-night: #162340;
+    --stardew-sky-sunset: #ffcf6b;
+  
+    /* UI Colors */
+    --stardew-wood: #916a3d;
+    --stardew-wood-dark: #6e4a1f;
+    --stardew-cream: #fffacd;
+    --stardew-orange: #f5a442;
+    --stardew-text-dark: #513718;
+  
+    /* Status Colors */
+    --stardew-danger: #e84855;
+    --stardew-warning: #f9dc5c;
+    --stardew-good: #3caea3;
+  
+    /* Grid System */
+    --tile-size: 32px;
+  }
+  
+  /* Pixel-Art-Effekte */
+  .pixel-art {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+  
+  /* Stardew-Style-Animationen */
+  @keyframes subtle-sway {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(2deg); }
+    100% { transform: rotate(0deg); }
+  }
+  
+  @keyframes water-ripple {
+    0% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.5; }
+  }
+  
+  @keyframes pixel-rain {
+    0% { transform: translateY(-10px); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(100px); opacity: 0; }
+  }

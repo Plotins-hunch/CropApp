@@ -1,0 +1,28 @@
+/* src/styles/index.css */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Google Fonts für Pixel-Art-Stil importieren */
+@import '@fontsource/press-start-2p/index.css';
+@import '@fontsource/vt323/index.css';
+
+/* Importiere unsere benutzerdefinierten Stile */
+@import './pixelArt.css';
+@import './tiles.css';
+@import './ui.css';
+
+/* Globale Stile */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'VT323', monospace;
+  background-color: #3D7D27;
+  color: #513718;
+  image-rendering: optimizeSpeed;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Press Start 2P', cursive;
+  letter-spacing: 1px;
+}
