@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './styles/index.css';
 
 function App() {
   const [message, setMessage] = useState('');
@@ -13,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>{message || "Loading..."}</h1>
+        <h1>{message || "Hello World"}</h1>
       </header>
     </div>
   );
