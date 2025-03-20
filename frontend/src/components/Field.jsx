@@ -2,35 +2,67 @@ import React, { useState } from 'react';
 import '../styles/Field.css';
 import { SunIcon, CloudIcon, CloudRainIcon } from 'lucide-react';
 
-const FieldTile = ({ type, x, y, moisture, onHover, isHovered }) => {
+const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile }) => {
   const getContent = () => {
     switch (type) {
       case 'corn':
-        return <div className="crop corn"></div>;
+        return (
+          <div className="tile-content">
+            <div className="crop-icon corn-icon"></div>
+          </div>
+        );
       case 'wheat':
-        return <div className="crop wheat"></div>;
+        return (
+          <div className="tile-content">
+            <div className="crop-icon wheat-icon"></div>
+          </div>
+        );
       case 'soybean':
-        return <div className="crop soybean"></div>;
+        return (
+          <div className="tile-content">
+            <div className="crop-icon soybean-icon"></div>
+          </div>
+        );
       case 'tree':
-        return <div className="crop tree"></div>;
+        return (
+          <div className="tile-content">
+            <div className="crop-icon tree-icon"></div>
+          </div>
+        );
       default:
         return null;
     }
   };
 
-  const getMoistureClass = () => {
-    if (moisture === 'dry') return 'moisture-dry';
-    if (moisture === 'wet') return 'moisture-wet';
-    return '';
-  };
+  // Check if this tile is on the edge of the field
+  let tileClasses = `field-tile ${type} ${moisture} ${isHovered ? 'hovered' : ''}`;
+  if (isEdgeTile) tileClasses += ' edge-tile';
 
   return (
     <div 
-      className={`field-tile ${type} ${getMoistureClass()} ${isHovered ? 'hovered' : ''}`}
+      className={tileClasses}
+      style={{
+        gridColumn: x + 1,
+        gridRow: y + 1
+      }}
       onMouseEnter={() => onHover({ x, y, type, moisture })}
       onMouseLeave={() => onHover(null)}
     >
       {getContent()}
+      
+      {/* For edge tiles, add visible soil sides based on isometric perspective */}
+      {isEdgeTile && (
+        <>
+          {/* Bottom edge gets a front soil face */}
+          {y === 11 && <div className="tile-soil-front"></div>}
+          
+          {/* Left edge gets a left soil face */}
+          {x === 0 && <div className="tile-soil-left"></div>}
+          
+          {/* Bottom-left corner needs both faces to connect properly */}
+          {x === 0 && y === 11 && <div className="tile-soil-corner"></div>}
+        </>
+      )}
     </div>
   );
 };
@@ -41,18 +73,18 @@ const Field = ({ weather = 'sunny' }) => {
   
   // Define field layout with rows and columns
   const fieldLayout = [
-    // Field layout - 10x12 grid
+    // Field layout - 12x12 grid
+    ['grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass'],
     ['grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass'],
     ['grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'wheat', 'wheat', 'wheat', 'wheat', 'grass'],
-    ['grass', 'grass', 'grass', 'tree', 'grass', 'grass', 'wheat', 'wheat', 'wheat', 'wheat', 'wheat', 'grass'],
-    ['grass', 'grass', 'tree', 'tree', 'grass', 'grass', 'wheat', 'wheat', 'wheat', 'wheat', 'grass', 'grass'],
-    ['grass', 'tree', 'tree', 'grass', 'grass', 'grass', 'grass', 'wheat', 'wheat', 'grass', 'grass', 'grass'],
-    ['grass', 'grass', 'grass', 'grass', 'water', 'water', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass'],
-    ['grass', 'grass', 'grass', 'grass', 'water', 'water', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass'],
-    ['grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass'],
-    ['grass', 'corn', 'corn', 'corn', 'corn', 'grass', 'grass', 'grass', 'grass', 'soybean', 'soybean', 'grass'],
+    ['grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'wheat', 'wheat', 'wheat', 'wheat', 'wheat', 'grass'],
+    ['grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'wheat', 'wheat', 'wheat', 'wheat', 'wheat', 'grass'],
+    ['grass', 'tree', 'tree', 'grass', 'grass', 'grass', 'wheat', 'wheat', 'wheat', 'wheat', 'wheat', 'grass'],
+    ['grass', 'tree', 'tree', 'tree', 'grass', 'water', 'water', 'grass', 'grass', 'grass', 'grass', 'grass'],
+    ['grass', 'grass', 'grass', 'grass', 'grass', 'water', 'water', 'grass', 'grass', 'soybean', 'soybean', 'grass'],
+    ['grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'soybean', 'soybean', 'soybean', 'grass'],
     ['grass', 'corn', 'corn', 'corn', 'corn', 'grass', 'grass', 'grass', 'soybean', 'soybean', 'soybean', 'grass'],
-    ['grass', 'corn', 'corn', 'corn', 'grass', 'grass', 'grass', 'grass', 'soybean', 'soybean', 'soybean', 'grass'],
+    ['grass', 'corn', 'corn', 'corn', 'corn', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass'],
     ['grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass'],
   ];
 
@@ -75,6 +107,12 @@ const Field = ({ weather = 'sunny' }) => {
   const handleTileHover = (tileInfo) => {
     setHoveredTile(tileInfo);
     setShowTooltip(!!tileInfo);
+  };
+
+  // Check if a tile is on the edge of the field
+  const isEdgeTile = (x, y) => {
+    // For our isometric view, we only care about left and bottom edges
+    return x === 0 || y === 11;
   };
 
   const renderWeatherEffects = () => {
@@ -164,22 +202,22 @@ const Field = ({ weather = 'sunny' }) => {
       {renderWeatherEffects()}
       
       {/* Field layout */}
-      <div className="field-perspective">
+      <div className="isometric-field">
+        {/* Field grid */}
         <div className="field-grid">
           {fieldLayout.map((row, y) => (
-            <div key={`row-${y}`} className="field-row">
-              {row.map((tileType, x) => (
-                <FieldTile 
-                  key={`tile-${x}-${y}`}
-                  type={tileType}
-                  x={x}
-                  y={y}
-                  moisture={moistureMap[y][x]}
-                  onHover={handleTileHover}
-                  isHovered={hoveredTile && hoveredTile.x === x && hoveredTile.y === y}
-                />
-              ))}
-            </div>
+            row.map((tileType, x) => (
+              <FieldTile 
+                key={`tile-${x}-${y}`}
+                type={tileType}
+                x={x}
+                y={y}
+                moisture={moistureMap[y][x]}
+                onHover={handleTileHover}
+                isHovered={hoveredTile && hoveredTile.x === x && hoveredTile.y === y}
+                isEdgeTile={isEdgeTile(x, y)}
+              />
+            ))
           ))}
         </div>
       </div>
