@@ -195,16 +195,22 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  height: fit-content;
+  align-self: flex-start;
 }
 
 .field-container {
   height: 600px;
+  min-height: 600px;
+  max-height: 600px;
   background-color: var(--stardew-green);
   border: 4px solid var(--stardew-wood-dark);
   border-radius: 8px;
   box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
   overflow: hidden;
   position: relative;
+  flex-shrink: 0; /* Prevents container from shrinking */
+  flex-grow: 0; /* Prevents container from growing */
 }
 
 .field-controls {

@@ -136,6 +136,101 @@
   font-size: 18px;
 }
 
+.product-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  position: relative;
+  padding: 0;
+  width: 100%;
+}
+
+.carousel-window {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+
+.carousel-nav-button {
+  background: var(--stardew-wood-dark);
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--stardew-cream);
+  cursor: pointer;
+  margin: 0;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  z-index: 2;
+  flex-shrink: 0;
+  position: absolute;
+}
+
+.prev-button {
+  left: -15px;
+}
+
+.next-button {
+  right: -15px;
+}
+
+.next-button:focus, .next-button:hover {
+  background-color: #4267B2; /* Blue highlight for the right button as shown in screenshot */
+}
+
+@media (min-width: 768px) {
+  .prev-button {
+    left: -22px;
+  }
+  
+  .next-button {
+    right: -22px;
+  }
+}
+
+.carousel-nav-button:hover {
+  transform: scale(1.1);
+  background-color: var(--stardew-green);
+}
+
+.carousel-nav-button:active {
+  transform: scale(0.95);
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.indicator-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--stardew-wood-dark);
+  border: none;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.indicator-dot.active {
+  opacity: 1;
+  background-color: var(--stardew-green);
+  transform: scale(1.2);
+}
+
 @media (max-width: 768px) {
   .products-grid {
     grid-template-columns: 1fr;
