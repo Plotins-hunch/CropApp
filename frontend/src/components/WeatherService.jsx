@@ -10,8 +10,8 @@ const WeatherService = ({ onWeatherChange }) => {
   const [error, setError] = useState(null);
 
   // Default coordinates for the field
-  const lat = 47.5596;
-  const lon = 7.5886;
+  const lat = -7.5596;
+  const lon = -7.5886;
 
   useEffect(() => {
     const fetchWeather = async () => {
