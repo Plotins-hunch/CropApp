@@ -9,6 +9,7 @@ import ProductRecommendation from './components/ProductRecommendation';
 import WeatherService from './components/WeatherService';
 import TimeSlider from './components/TimeSlider';
 import FieldLegend from './components/FieldLegend';
+import FeedbackButton from './components/FeedbackButton';
 import { getCurrentWeather } from './services/weatherApi';
 
 // Import icons
@@ -233,6 +234,13 @@ function App() {
             </div>
             <div className="panel-content">
               <ProductRecommendation />
+            </div>
+          </div>
+          
+          {/* Feedback Button Panel */}
+          <div className="sidebar-panel">
+            <div className="panel-content" style={{ padding: '16px', textAlign: 'center' }}>
+              <FeedbackButton />
             </div>
           </div>
         </div>
