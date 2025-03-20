@@ -50,17 +50,17 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile }) => 
     >
       {getContent()}
       
-      {/* For edge tiles, add visible soil sides */}
+      {/* For edge tiles, add visible soil sides based on isometric perspective */}
       {isEdgeTile && (
         <>
           {/* Bottom edge gets a front soil face */}
           {y === 11 && <div className="tile-soil-front"></div>}
           
-          {/* Right edge gets a right soil face */}
-          {x === 11 && <div className="tile-soil-right"></div>}
+          {/* Left edge gets a left soil face */}
+          {x === 0 && <div className="tile-soil-left"></div>}
           
-          {/* Corner tile gets both faces */}
-          {x === 11 && y === 11 && <div className="tile-soil-corner"></div>}
+          {/* Bottom-left corner needs both faces to connect properly */}
+          {x === 0 && y === 11 && <div className="tile-soil-corner"></div>}
         </>
       )}
     </div>
@@ -111,7 +111,8 @@ const Field = ({ weather = 'sunny' }) => {
 
   // Check if a tile is on the edge of the field
   const isEdgeTile = (x, y) => {
-    return x === 0 || y === 0 || x === 11 || y === 11;
+    // For our isometric view, we only care about left and bottom edges
+    return x === 0 || y === 11;
   };
 
   const renderWeatherEffects = () => {
@@ -202,13 +203,6 @@ const Field = ({ weather = 'sunny' }) => {
       
       {/* Field layout */}
       <div className="isometric-field">
-        {/* Main soil block under the field */}
-        <div className="soil-block">
-          <div className="soil-top"></div>
-          <div className="soil-front"></div>
-          <div className="soil-right"></div>
-        </div>
-        
         {/* Field grid */}
         <div className="field-grid">
           {fieldLayout.map((row, y) => (

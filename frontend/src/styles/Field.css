@@ -42,48 +42,6 @@
     perspective: 1000px;
   }
   
-  /* Main soil block that sits under the field */
-  .soil-block {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transform: rotateX(60deg) rotateZ(-45deg);
-    z-index: 1;
-  }
-  
-  .soil-top {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: #8a6837;
-    opacity: 0; /* Hide the top, it's covered by the field */
-  }
-  
-  .soil-front {
-    position: absolute;
-    width: 100%;
-    height: 40px;
-    bottom: -40px;
-    left: 0;
-    transform-origin: bottom;
-    transform: rotateX(-90deg);
-    background: linear-gradient(to bottom, #8a6837, #5c4425);
-    border: 1px solid rgba(0, 0, 0, 0.3);
-  }
-  
-  .soil-right {
-    position: absolute;
-    width: 40px;
-    height: 100%;
-    top: 0;
-    right: -40px;
-    transform-origin: right;
-    transform: rotateY(90deg);
-    background: linear-gradient(to right, #8a6837, #5c4425);
-    border: 1px solid rgba(0, 0, 0, 0.3);
-  }
-  
   /* Field grid with CSS grid for perfect square tiles */
   .field-grid {
     display: grid;
@@ -96,6 +54,7 @@
     transform-origin: center center;
     position: relative;
     z-index: 2;
+    gap: 0; /* Remove gap to ensure tiles connect perfectly */
   }
   
   /* Individual field tiles */
@@ -119,37 +78,27 @@
   .tile-soil-front {
     position: absolute;
     width: 100%;
-    height: 30px;
-    bottom: -30px;
+    height: 40px; /* Significantly increased from 15px */
+    bottom: 0; /* Connect directly to the bottom of the tile */
     left: 0;
     transform-origin: bottom;
-    transform: rotateX(-90deg);
+    transform: rotateX(-90deg) translateY(40px); /* Adjusted to match new height */
     background: linear-gradient(to bottom, #8a6837, #5c4425);
-    z-index: -1;
+    z-index: 1;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
   }
   
-  .tile-soil-right {
+  .tile-soil-left {
     position: absolute;
-    width: 30px;
+    width: 40px; /* Significantly increased from 15px */
     height: 100%;
     top: 0;
-    right: -30px;
-    transform-origin: right;
-    transform: rotateY(90deg);
-    background: linear-gradient(to right, #8a6837, #5c4425);
-    z-index: -1;
-  }
-  
-  .tile-soil-corner {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    bottom: -30px;
-    right: -30px;
-    transform-origin: bottom right;
-    transform: rotateX(-90deg) rotateY(90deg);
-    background-color: #5c4425;
-    z-index: -1;
+    left: 0; /* Connect directly to the left of the tile */
+    transform-origin: left;
+    transform: rotateY(-90deg) translateX(-40px); /* Adjusted to match new width */
+    background: linear-gradient(to left, #8a6837, #5c4425);
+    z-index: 1;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
   }
   
   /* Tile hover effect */
@@ -158,6 +107,18 @@
     transform: translateZ(5px);
     box-shadow: 0 0 10px rgba(255, 250, 205, 0.7);
     border-color: #fffacd;
+  }
+  
+  /* Corner piece where soil faces meet */
+  .tile-soil-corner {
+    position: absolute;
+    width: 40px; /* Increased from 15px */
+    height: 40px; /* Increased from 15px */
+    bottom: 0;
+    left: 0;
+    transform: rotateX(-90deg) rotateY(-90deg) translate3d(-40px, 40px, 0); /* Adjusted to match new dimensions */
+    background-color: #5c4425;
+    z-index: 1;
   }
   
   /* Base tile types */
