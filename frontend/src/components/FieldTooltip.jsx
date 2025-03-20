@@ -1,5 +1,5 @@
-// This update is for src/components/FieldTooltip.jsx
-// Update the component to handle the improved positioning information
+// Update for src/components/FieldTooltip.jsx
+// Fix tooltip positioning issues
 
 import React, { useState, useEffect } from 'react';
 import '../styles/Tooltip.css';
@@ -69,18 +69,13 @@ const FieldTooltip = ({ tile, position, isIsometric = false }) => {
     maxWidth: '250px',
   };
 
-  // Adjust positioning to account for isometric view
-  if (isIsometric) {
-    // For isometric tiles, place tooltip above and slightly to the right
-    tooltipStyle.left = `${position.x}px`;
-    tooltipStyle.bottom = `${window.innerHeight - position.y + 30}px`;
-    
-    // Use a transform to position the tooltip with its bottom-left corner as the anchor point
-    tooltipStyle.transform = 'translate(-50%, 0)';
-  } else {
-    // Default positioning (fallback)
-    tooltipStyle.top = `${position.y + 20}px`;
-    tooltipStyle.left = `${position.x + 20}px`;
+  // Position tooltip near the mouse cursor
+  tooltipStyle.left = `${position.x + 20}px`; // Offset slightly right of cursor
+  tooltipStyle.top = `${position.y - 10}px`;  // Offset slightly above cursor
+  
+  // Ensure tooltip stays within viewport
+  if (position.x > window.innerWidth - 270) { // If close to right edge
+    tooltipStyle.left = `${position.x - 270}px`; // Position left of cursor
   }
   
   // Show loading state

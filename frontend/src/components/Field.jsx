@@ -57,15 +57,14 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weath
         gridRow: y + 1
       }}
       onMouseEnter={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
+        // Use mouse coordinates directly instead of tile position
         onHover(
           { x, y, type, moisture }, 
           { 
-            x: rect.left + rect.width/2, // Center of the tile
-            y: rect.top + rect.height/2, // Center of the tile
-            tileRect: rect // Pass the whole rect for more positioning options
+            x: e.clientX, // Use the mouse X position
+            y: e.clientY  // Use the mouse Y position
           }
-        )
+        );
       }}
       onMouseLeave={() => onHover(null, null)}
     >
