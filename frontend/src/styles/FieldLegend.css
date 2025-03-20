@@ -1,0 +1,88 @@
+.field-legend {
+  max-width: 800px; /* Reduced width */
+  margin: 0 auto 20px; /* Centered with auto margins */
+  padding: 15px;
+}
+
+.field-legend h2 {
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: nowrap; /* Prevent wrapping to keep all items in one row */
+  justify-content: space-between; /* Equal spacing between items */
+  margin: 0 auto;
+}
+
+.legend-item {
+  display: flex;
+  flex-direction: column; /* Stack color and label vertically */
+  align-items: center;
+  text-align: center;
+  flex: 1; /* Each item takes equal width */
+  padding: 0 5px;
+}
+
+.legend-color {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #6e4a1f;
+  margin-bottom: 5px; /* Space between color and label */
+}
+
+.legend-color.grass {
+  background-color: #58A63C;
+}
+
+.legend-color.water {
+  background-color: #5dbcd2;
+}
+
+.legend-color.moisture-dry {
+  background-color: #d4b483;
+}
+
+.legend-color.moisture-wet {
+  background-color: #58A63C;
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h6v6H0zm12 0h6v6h-6zM0 12h6v6H0zm12 12h6v6h-6z' fill='%233e97ae' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+.legend-color.corn-color {
+  background-color: #a9db7a;
+}
+
+.legend-color.wheat-color {
+  background-color: #f9dc5c;
+}
+
+.legend-color.soybean-color {
+  background-color: #a9db7a;
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='2' fill='%2358A63C'/%3E%3C/svg%3E");
+}
+
+.legend-label {
+  font-family: 'VT323', monospace;
+  font-size: 14px; /* Slightly smaller text */
+  white-space: nowrap;
+}
+
+/* Mobile responsiveness adjusted */
+@media (max-width: 768px) {
+  .legend-items {
+    flex-wrap: wrap;
+  }
+  
+  .legend-item {
+    width: 30%;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .legend-item {
+    width: 45%;
+  }
+}
