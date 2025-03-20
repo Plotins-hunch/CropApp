@@ -5,8 +5,10 @@ import requests
 router = APIRouter()
 
 SYNGENTA_WEATHER_API = "https://services.cehub.syngenta-ais.com/api/Forecast/ShortRangeForecastDaily"
+SYNGENTA_HISTORICAL_API = "http://my.meteoblue.com/dataset/query?apikey=e063b648626d"
 # key 6
 API_KEY = "1f3f9b58-f6d5-4ddc-8891-fa8ee79890ee"
+HISTORICAL_API = "e063b648626d"
 
 @router.get("/")
 async def read_root():
@@ -181,3 +183,54 @@ def get_drought_risk(date: str, lat: float, lon: float):
         "risk_level": drought_risk
     }
 
+@router.get("/soildata/{date}/{lat}/{lon}")
+def get_drought_risk(date: str, lat: float, lon: float):
+    adjdate = date + "T+00:00/" + date + "T+00:00"
+    print(adjdate)
+
+    params = {
+         "units": {
+             "temperature": "C",
+             "velocity": "km/h",
+             "length": "metric",
+             "energy": "watts"
+         },
+         "geometry": {
+             "type": "MultiPoint",
+             "coordinates": [[lat,lon]]
+         },
+         "format": "json",
+         "timeIntervals": [
+             adjdate
+         ],
+         "queries": [{
+             "domain": "NEMSGLOBAL",
+             "timeResolution": "daily",
+             "codes": [
+                 {"code": 11, "level": "2 m above gnd", "aggregation": "mean"},
+                 #{"code": 52, "level": "2 m above gnd"},
+                 #{"code": 157, "level": "180-0 mb above gnd"}
+              ]
+         }],
+         #"apikey": HISTORICAL_API
+     }
+
+    response = requests.post(SYNGENTA_HISTORICAL_API , json=params)
+    print(response.text)
+
+    if response.status_code != 200:
+            return {"error": "Erddaten konnten nicht abgerufen werden."}
+
+    data = response.json()
+
+    print(data)
+    # Extrahiere relevante Werte
+    temperature = data[0]["codes"][0]["dataPerTimeInterval"][0]["data"][0]
+    #soil_moisture = data.get("data", {}).get("153", {}).get("value", "N/A")
+    #soil_temperature = data.get("data", {}).get("139", {}).get("value", "N/A")
+
+    return {
+        "temperature": temperature
+        #"soil_moisture": soil_moisture,
+        #"soil_temperature": soil_temperature
+    }
