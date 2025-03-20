@@ -1,4 +1,4 @@
-/* Field.css - Revised for Stardew Valley Style */
+/* Field.css - With Visible Soil */
 
 .field-container {
     position: relative;
@@ -30,57 +30,140 @@
     background: linear-gradient(to bottom, #57606f, #a4b0be);
   }
   
-  /* Field perspective container */
-  .field-perspective {
+  /* Isometric field container */
+  .isometric-field {
     position: absolute;
     top: 20%;
     left: 50%;
-    width: 90%;
+    width: 80%;
     height: 70%;
     transform: translateX(-50%);
     transform-style: preserve-3d;
+    perspective: 1000px;
   }
   
-  /* Field grid */
-  .field-grid {
-    transform: rotateX(60deg) rotateZ(-45deg);
-    transform-origin: center center;
+  /* Main soil block that sits under the field */
+  .soil-block {
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
+    transform-style: preserve-3d;
+    transform: rotateX(60deg) rotateZ(-45deg);
+    z-index: 1;
   }
   
-  .field-row {
-    display: flex;
-    flex: 1;
+  .soil-top {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #8a6837;
+    opacity: 0; /* Hide the top, it's covered by the field */
+  }
+  
+  .soil-front {
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    bottom: -40px;
+    left: 0;
+    transform-origin: bottom;
+    transform: rotateX(-90deg);
+    background: linear-gradient(to bottom, #8a6837, #5c4425);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+  }
+  
+  .soil-right {
+    position: absolute;
+    width: 40px;
+    height: 100%;
+    top: 0;
+    right: -40px;
+    transform-origin: right;
+    transform: rotateY(90deg);
+    background: linear-gradient(to right, #8a6837, #5c4425);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Field grid with CSS grid for perfect square tiles */
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    width: 100%;
+    height: 100%;
+    transform: rotateX(60deg) rotateZ(-45deg);
+    transform-style: preserve-3d;
+    transform-origin: center center;
+    position: relative;
+    z-index: 2;
   }
   
   /* Individual field tiles */
   .field-tile {
-    flex: 1;
     position: relative;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, filter 0.2s ease;
+    width: 100%;
+    height: 100%;
     box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    transform-style: preserve-3d;
   }
   
-  /* When tile is hovered */
+  /* Edge tiles have special styling for soil visibility */
+  .field-tile.edge-tile {
+    position: relative;
+    z-index: 3;
+  }
+  
+  /* Tile soil sides - only visible on the edges */
+  .tile-soil-front {
+    position: absolute;
+    width: 100%;
+    height: 30px;
+    bottom: -30px;
+    left: 0;
+    transform-origin: bottom;
+    transform: rotateX(-90deg);
+    background: linear-gradient(to bottom, #8a6837, #5c4425);
+    z-index: -1;
+  }
+  
+  .tile-soil-right {
+    position: absolute;
+    width: 30px;
+    height: 100%;
+    top: 0;
+    right: -30px;
+    transform-origin: right;
+    transform: rotateY(90deg);
+    background: linear-gradient(to right, #8a6837, #5c4425);
+    z-index: -1;
+  }
+  
+  .tile-soil-corner {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    bottom: -30px;
+    right: -30px;
+    transform-origin: bottom right;
+    transform: rotateX(-90deg) rotateY(90deg);
+    background-color: #5c4425;
+    z-index: -1;
+  }
+  
+  /* Tile hover effect */
   .field-tile.hovered {
     z-index: 10;
-    filter: brightness(1.2);
     transform: translateZ(5px);
-    box-shadow: 0 0 5px rgba(255, 255, 0, 0.5);
-    border: 2px solid #fffacd;
+    box-shadow: 0 0 10px rgba(255, 250, 205, 0.7);
+    border-color: #fffacd;
   }
   
-  /* Tile type styles */
+  /* Base tile types */
   .field-tile.grass {
     background-color: #58A63C;
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10h10v10H0zm20 0h10v10H20zM0 30h10v10H0zm20 0h10v10H20z' fill='%23a9db7a' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20h20v20H0zM20 0h20v20H20z' fill='%23a9db7a' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
   }
   
   .field-tile.water {
@@ -89,51 +172,65 @@
     animation: water-ripple 2s infinite ease-in-out;
   }
   
-  .field-tile.dirt {
+  /* Crop areas with distinctive backgrounds */
+  .field-tile.corn {
     background-color: #b98d4f;
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h10v10H0zm20 0h10v10H20zM0 20h10v10H0zm20 20h10v10H20z' fill='%238a6837' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+  
+  .field-tile.wheat {
+    background-color: #b98d4f;
+  }
+  
+  .field-tile.soybean {
+    background-color: #b98d4f;
+  }
+  
+  .field-tile.tree {
+    background-color: #58A63C;
   }
   
   /* Soil moisture indicators */
-  .field-tile.moisture-dry {
+  .field-tile.dry {
     background-color: #d4b483;
     background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h10v10H0zm20 0h10v10H20zM0 20h10v10H0zm20 20h10v10H20z' fill='%23c1996b' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
   }
   
-  .field-tile.moisture-wet {
-    background-color: #58A63C;
+  .field-tile.wet {
     background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h10v10H0zm20 0h10v10H20zM0 20h10v10H0zm20 20h10v10H20z' fill='%233e97ae' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
   }
   
-  /* Crop styles */
-  .crop {
+  /* Crop icons */
+  .tile-content {
     position: absolute;
     width: 100%;
     height: 100%;
-    top: 0;
-    left: 0;
-    transform-origin: bottom center;
-    z-index: 5;
-    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   
-  .crop.corn {
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 5 L25 15 L20 25 L15 15 Z' fill='%23a9db7a' stroke='%233D7D27' stroke-width='1'/%3E%3Cpath d='M20 25 L20 35' stroke='%235c4425' stroke-width='3'/%3E%3C/svg%3E");
-    animation: subtle-sway 3s infinite ease-in-out alternate;
+  .crop-icon {
+    width: 80%;
+    height: 80%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
   }
   
-  .crop.wheat {
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 5 L25 10 L23 15 L26 20 L22 25 L25 30 L20 35 L15 30 L18 25 L14 20 L17 15 L15 10 Z' fill='%23f9dc5c' stroke='%23f5a442' stroke-width='1'/%3E%3C/svg%3E");
-    animation: subtle-sway 2.5s infinite ease-in-out alternate;
+  .corn-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,2L9,6H15L12,2M11,8H13V20H11V8Z' fill='%23f9dc5c'/%3E%3C/svg%3E");
   }
   
-  .crop.soybean {
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='15' r='10' fill='%23a9db7a' stroke='%2358A63C' stroke-width='1'/%3E%3Cpath d='M20 25 L20 35' stroke='%235c4425' stroke-width='2'/%3E%3Ccircle cx='15' cy='12' r='2' fill='%2358A63C'/%3E%3Ccircle cx='22' cy='10' r='2' fill='%2358A63C'/%3E%3Ccircle cx='25' cy='17' r='2' fill='%2358A63C'/%3E%3C/svg%3E");
-    animation: subtle-sway 3.5s infinite ease-in-out alternate;
+  .wheat-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,2L9,6L12,10L15,6L12,2M15,6L12,10L15,14L18,10L15,6M9,6L6,10L9,14L12,10L9,6M12,10L9,14L12,18L15,14L12,10M10,20H14V22H10V20Z' fill='%23f9dc5c'/%3E%3C/svg%3E");
   }
   
-  .crop.tree {
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='15' r='15' fill='%233D7D27' stroke='%2358A63C' stroke-width='1'/%3E%3Cpath d='M20 30 L20 40' stroke='%235c4425' stroke-width='4'/%3E%3C/svg%3E");
+  .soybean-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18,12.5C18,13.88 16.88,15 15.5,15C14.12,15 13,13.88 13,12.5V10.42C13,9.5 12.5,8.76 11.73,8.3C11.85,8.21 12,8.14 12.13,8.07C12.39,7.96 12.69,7.88 13,7.82V5H11V3H13V1H15V3H17V5H15V7.82C15.31,7.88 15.61,7.96 15.87,8.07C17.18,8.59 18,9.97 18,11.5V12.5M2,15C2,13.62 3.12,12.5 4.5,12.5C5.88,12.5 7,13.62 7,15V17.08C7,18 7.5,18.74 8.27,19.2C8.15,19.29 8,19.36 7.87,19.43C7.61,19.54 7.31,19.62 7,19.68V22H9V24H7V23H5V24H3V22H5V19.68C4.69,19.62 4.39,19.54 4.13,19.43C2.82,18.91 2,17.53 2,16V15M8,12.5C8,11.12 9.12,10 10.5,10C11.88,10 13,11.12 13,12.5V15.08C13,16 13.5,16.74 14.27,17.2C14.15,17.29 14,17.36 13.87,17.43C13.61,17.54 13.31,17.62 13,17.68V20H15V22H13V21H11V22H9V20H11V17.68C10.69,17.62 10.39,17.54 10.13,17.43C8.82,16.91 8,15.53 8,14V12.5Z' fill='%23a9db7a'/%3E%3C/svg%3E");
+  }
+  
+  .tree-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z' fill='%233D7D27'/%3E%3C/svg%3E");
   }
   
   /* Weather effects */
@@ -228,11 +325,6 @@
   }
   
   /* Animations */
-  @keyframes subtle-sway {
-    0% { transform: rotate(-2deg); }
-    100% { transform: rotate(2deg); }
-  }
-  
   @keyframes water-ripple {
     0% { filter: brightness(1); }
     50% { filter: brightness(1.2); }
