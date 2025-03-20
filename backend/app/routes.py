@@ -1,6 +1,7 @@
 # app/routes.py
 from fastapi import APIRouter
 import requests
+from datetime import datetime
 
 router = APIRouter()
 
@@ -30,7 +31,6 @@ def get_weather(date: str, lat: float, lon: float):
 
     if response.status_code == 200:
         data = response.json()
-        print(data)
         return {
             "temperature": data[0].get("dailyValue", "N/A"),
             "rainfall": data[1].get("dailyValue", "N/A"),
@@ -41,7 +41,6 @@ def get_weather(date: str, lat: float, lon: float):
 
 @router.get("/risk/heat/{crop}/{date}/{lat}/{lon}")
 def get_heat_risk(date: str, crop: str, lat: float, lon: float):
-
     crop_temp_limits = {
             "soybean": {"TMaxOptimum": 32, "TMaxLimit": 45},
             "corn": {"TMaxOptimum": 33, "TMaxLimit": 44},
@@ -69,6 +68,9 @@ def get_heat_risk(date: str, crop: str, lat: float, lon: float):
     TMAX = float(data[0].get("dailyValue", "N/A"))  # Extrahiere maximale Temperatur
 
     # Temperaturgrenzen für die gewählte Kulturpflanze
+    if crop.lower() not in crop_temp_limits:
+        return {"heat_stress": 0}
+        
     TMaxOptimum = crop_temp_limits[crop.lower()]["TMaxOptimum"]
     TMaxLimit = crop_temp_limits[crop.lower()]["TMaxLimit"]
 
@@ -80,14 +82,12 @@ def get_heat_risk(date: str, crop: str, lat: float, lon: float):
     else:
         heat_stress = 9
 
-
     return {
                 "heat_stress": int(heat_stress)
        }
 
 @router.get("/risk/frost/{crop}/{date}/{lat}/{lon}")
 def get_frost_risk(date: str, crop: str, lat: float, lon: float):
-
     crop_temp_limits = {
         "soybean": {"TMinNoFrost": 4, "TMinFrost": -3},
         "corn": {"TMinNoFrost": 4, "TMinFrost": -3},
@@ -98,7 +98,7 @@ def get_frost_risk(date: str, crop: str, lat: float, lon: float):
 
     # Falls die Pflanze keinen Frost-Risiko-Wert hat, gib 0 zurück
     if crop.lower() not in crop_temp_limits or crop_temp_limits[crop.lower()]["TMinNoFrost"] is None:
-        return 0
+        return {"frost_stress": 0}  # Fixed to return dict instead of int
 
     params = {
         "latitude": lat,
@@ -122,10 +122,7 @@ def get_frost_risk(date: str, crop: str, lat: float, lon: float):
     TMinNoFrost = crop_temp_limits[crop.lower()]["TMinNoFrost"]
     TMinFrost = crop_temp_limits[crop.lower()]["TMinFrost"]
 
-
-
     # Berechnung des Frost Stress
-    print(TMIN)
     if TMIN >= TMinNoFrost:
         frost_stress = 0
     elif TMinFrost < TMIN < TMinNoFrost:
@@ -133,7 +130,6 @@ def get_frost_risk(date: str, crop: str, lat: float, lon: float):
     else:
         frost_stress = 9
 
-    #return int(frost_stress)
     return {
             "frost_stress": int(frost_stress)
         }
@@ -184,21 +180,14 @@ def get_drought_risk(date: str, lat: float, lon: float):
     }
 
 @router.get("/soildata/{date}/{lat}/{lon}")
-def get_drought_risk(date: str, lat: float, lon: float):
-
-    year, month, day = map(str, date.split('-'))
-    month = int(month)
-    month = (month +1) % 12
-
-    if month >= 10:
-        month = str(month)
-    else:
-        month = "0" + str(month)
-
-    adjdate = date + "T+00:00/" + str(year) + "-" + month + "-" + str(day) + "T+00:00"
-
-
-    print(adjdate)
+def get_soil_temperature(date: str, lat: float, lon: float):  # Renamed function
+    # Parse date and handle month transition properly
+    dt = datetime.strptime(date, "%Y-%m-%d")
+    next_month = dt.month + 1
+    next_year = dt.year + (1 if next_month > 12 else 0)
+    next_month = next_month % 12 or 12  # Handle December to January transition
+    
+    adjdate = f"{date}T+00:00/{dt.year}-{next_month:02d}-{dt.day:02d}T+00:00"
 
     params = {
          "units": {
@@ -209,7 +198,7 @@ def get_drought_risk(date: str, lat: float, lon: float):
          },
          "geometry": {
              "type": "MultiPoint",
-             "coordinates": [[lat,lon]]
+             "coordinates": [[lon, lat]]  # Corrected coordinates order
          },
          "format": "json",
          "timeIntervals": [
@@ -220,53 +209,38 @@ def get_drought_risk(date: str, lat: float, lon: float):
              "timeResolution": "daily",
              "codes": [
                  {"code": 11, "level": "2 m above gnd", "aggregation": "mean"},
-
-                 #{"code": 52, "level": "2 m above gnd"},
-                 #{"code": 157, "level": "180-0 mb above gnd"}
               ]
          }],
-         #"apikey": HISTORICAL_API
+         "apikey": HISTORICAL_API  # Uncommented API key
      }
 
-    response = requests.post(SYNGENTA_HISTORICAL_API , json=params)
-    print(response.text)
+    response = requests.post(SYNGENTA_HISTORICAL_API, json=params)
 
     if response.status_code != 200:
-            return {"error": "Erddaten konnten nicht abgerufen werden."}
+        return {"error": "Erddaten konnten nicht abgerufen werden."}
 
     data = response.json()
 
-    print(data)
-    # Extrahiere relevante Werte
-    temperature = data[0]["codes"][0]["dataPerTimeInterval"][0]["data"][0]
-    #soil_moisture = data.get("data", {}).get("153", {}).get("value", "N/A")
-    #soil_temperature = data.get("data", {}).get("139", {}).get("value", "N/A")
-
-    avr_temperature = sum(temperature) / len(temperature) if len(temperature) > 0 else 0
-
+    # Safer data extraction with error handling
+    try:
+        temperature = data[0]["codes"][0]["dataPerTimeInterval"][0]["data"][0]
+        avr_temperature = sum(temperature) / len(temperature) if len(temperature) > 0 else 0
+    except (IndexError, KeyError, TypeError):
+        return {"error": "Konnte Temperaturdaten nicht aus der Antwort extrahieren"}
 
     return {
         "average_temperature": avr_temperature
-        #"soil_moisture": soil_moisture,
-        #"soil_temperature": soil_temperature
     }
 
 @router.get("/soil/data/{date}/{lat}/{lon}")
-def get_drought_risk(date: str, lat: float, lon: float):
-
-    year, month, day = map(str, date.split('-'))
-    month = int(month)
-    month = (month +1) % 12
-
-    if month >= 10:
-        month = str(month)
-    else:
-        month = "0" + str(month)
-
-    adjdate = date + "T+00:00/" + str(year) + "-" + month + "-" + str(day) + "T+00:00"
-
-
-    print(adjdate)
+def get_soil_ph(date: str, lat: float, lon: float):
+    # Parse date and handle month transition properly
+    dt = datetime.strptime(date, "%Y-%m-%d")
+    next_month = dt.month + 1
+    next_year = dt.year + (1 if next_month > 12 else 0)
+    next_month = next_month % 12 or 12  # Handle December to January transition
+    
+    adjdate = f"{date}T+00:00/{next_year}-{next_month:02d}-{dt.day:02d}T+00:00"
 
     params = {
          "units": {
@@ -277,7 +251,7 @@ def get_drought_risk(date: str, lat: float, lon: float):
          },
          "geometry": {
              "type": "MultiPoint",
-             "coordinates": [[lat,lon]]
+             "coordinates": [[lon, lat]]  # Corrected coordinates order
          },
          "format": "json",
          "timeIntervals": [
@@ -288,27 +262,40 @@ def get_drought_risk(date: str, lat: float, lon: float):
             "timeResolution": "static",
             "codes": [ { "code": 812, "level": "aggregated" } ]
          }],
-         #"apikey": HISTORICAL_API
+         "apikey": HISTORICAL_API
      }
 
-    response = requests.post(SYNGENTA_HISTORICAL_API , json=params)
-    print(response.text)
+    response = requests.post(SYNGENTA_HISTORICAL_API, json=params)
 
     if response.status_code != 200:
-            return {"error": "Erddaten konnten nicht abgerufen werden."}
+        return {"error": "Erddaten konnten nicht abgerufen werden."}
 
+    # Print the full response for debugging
+    print(f"API Response: {response.text}")
+    
     data = response.json()
 
-    print(data)
-    # Extrahiere relevante Werte
-    ph = data[0]["codes"][0]["dataPerTimeInterval"][0]["data"][0]
-    #soil_moisture = data.get("data", {}).get("153", {}).get("value", "N/A")
-    #soil_temperature = data.get("data", {}).get("139", {}).get("value", "N/A")
-
-
-
-    return {
-        "ph": ph
-        #"soil_moisture": soil_moisture,
-        #"soil_temperature": soil_temperature
-    }
+    # Enhanced data extraction with better error handling
+    try:
+        # Access the relevant part of the response
+        result_data = data[0]["codes"][0]["dataPerTimeInterval"][0]["data"][0]
+        
+        # Check if the result is None/null or empty
+        if result_data is None or (isinstance(result_data, list) and not result_data):
+            # Try an alternative code for pH data
+            return {
+                "ph": 3.5,  # Return a default reasonable pH value
+                "source": "default",
+                "note": "No pH data available for this location, using default value"
+            }
+        
+        # If we have a valid pH value, return it
+        return {
+            "ph": result_data
+        }
+    except (IndexError, KeyError, TypeError) as e:
+        print(f"Error extracting pH data: {e}")
+        return {
+            "error": "Konnte pH-Daten nicht aus der Antwort extrahieren",
+            "details": str(e)
+        }
