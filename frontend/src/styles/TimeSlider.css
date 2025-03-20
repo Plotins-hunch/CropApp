@@ -1,0 +1,180 @@
+.time-slider-container {
+  max-width: 100%; /* Changed from 960px to use full width */
+  margin: 0 auto 20px; /* Reduced bottom margin from 30px */
+  padding: 15px; /* Reduced padding from 20px */
+  background-color: #916a3d;
+  border: 4px solid #6e4a1f;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; /* Reduced gap from 20px */
+}
+
+.slider-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 16px; /* Reduced from 18px */
+  color: #fffacd;
+  text-shadow: 2px 2px 0 #3D7D27;
+  margin: 0;
+}
+
+.date-display {
+  margin: 0; /* Reduced from 10px 0 */
+}
+
+.date-chip {
+  background-color: #fffacd;
+  border: 3px solid #6e4a1f;
+  border-radius: 10px;  /* Changed from 999px to a more rectangular shape for year display */
+  padding: 6px 12px;    /* Adjusted padding */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the year text */
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* You can remove the date-icon class if you don't want an icon beside the year */
+.date-icon {
+  display: none; /* Hide the date icon */
+}
+
+.date-text {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 16px;    /* Increased size for better visibility */
+  color: #3D7D27;
+  font-weight: bold;  /* Make the year stand out */
+  text-align: center; /* Center the text */
+}
+
+.slider-component {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  max-width: 800px; /* Increased from 600px for wider slider */
+}
+
+.range-slider-wrapper {
+  position: relative;
+  flex-grow: 1;
+  height: 40px; /* Increased from 30px */
+  display: flex;
+  align-items: center;
+}
+
+.slider-label {
+  font-family: 'VT323', monospace;
+  font-size: 16px; /* Reduced from 18px */
+  color: #fffacd;
+  width: 80px; /* Increased from 50px */
+  text-align: center;
+  line-height: 1.2;
+}
+
+.range-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 12px; /* Reduced from 20px */
+  background: transparent;
+  position: relative;
+  z-index: 2;
+}
+
+/* Create a custom thumb */
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px; /* Increased from 24px */
+  height: 28px; /* Increased from 24px */
+  border-radius: 50%;
+  background: #f5a442;
+  border: 3px solid #6e4a1f;
+  cursor: pointer;
+  position: relative;
+  z-index: 3;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s, width 0.1s, height 0.1s;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.range-slider::-moz-range-thumb {
+  width: 28px; /* Increased from 24px */
+  height: 28px; /* Increased from 24px */
+  border-radius: 50%;
+  background: #f5a442;
+  border: 3px solid #6e4a1f;
+  cursor: pointer;
+  position: relative;
+  z-index: 3;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s, width 0.1s, height 0.1s;
+}
+
+.range-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}
+
+/* Style the track behind the slider */
+.slider-track {
+  position: absolute;
+  height: 16px; /* Increased from 12px */
+  background-color: #5c4425;
+  border: 2px solid #6e4a1f;
+  border-radius: 8px;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  overflow: visible; /* Changed from hidden to allow the present marker to be visible */
+}
+
+.slider-fill {
+  position: absolute;
+  height: 100%;
+  background: linear-gradient(to right, #5dbcd2, #3D7D27, #f5a442);
+  width: 50%; /* Default */
+  left: 0;
+  transition: width 0.1s;
+}
+
+/* Present day marker */
+.present-marker {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  left: 50%;
+  width: 4px;
+  background: #fffacd;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  z-index: 2;
+  box-shadow: 0 0 4px rgba(255, 250, 205, 0.8);
+}
+
+.time-description {
+  background-color: #fffacd;
+  border: 3px solid #6e4a1f;
+  border-radius: 8px;
+  padding: 10px; /* Reduced from 15px */
+  text-align: center;
+  width: 80%;
+  max-width: 800px; /* Increased from 500px */
+  font-family: 'VT323', monospace;
+  font-size: 16px; /* Reduced from 18px */
+  color: #513718;
+}
+
+@media (max-width: 768px) {
+  .slider-component {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .slider-label {
+    width: 100%;
+  }
+}
