@@ -15,6 +15,54 @@ HISTORICAL_API = "e063b648626d"
 async def read_root():
     return {"message": "Welcome to the Hackathon API!"}
 
+@router.get("/cloud/{date}/{lat}/{lon}")
+def get_cloud_data(date: str, lat: float, lon: float):
+    params = {
+        "latitude": lat,
+        "longitude": lon,
+        "startDate": date,
+        "endDate": date,
+        "supplier": "Meteoblue",
+        "measureLabel": "Cloudcover_DailyAvg (pct)",
+        "format": "json",
+        "ApiKey": API_KEY
+    }
+    response = requests.get(SYNGENTA_WEATHER_API, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        return {
+            "cloud_cover": data[0].get("dailyValue", "N/A"),
+            "unit": "%"
+        }
+    else:
+        return {"error": "Could not fetch cloud data"}
+
+@router.get("/wind/{date}/{lat}/{lon}")
+def get_wind_data(date: str, lat: float, lon: float):
+    params = {
+        "latitude": lat,
+        "longitude": lon,
+        "startDate": date,
+        "endDate": date,
+        "supplier": "Meteoblue",
+        "measureLabel": "WindSpeed_DailyAvg (m/s);WindDirection_DailyAvg (Deg)",
+        "format": "json",
+        "ApiKey": API_KEY
+    }
+    response = requests.get(SYNGENTA_WEATHER_API, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        return {
+            "wind_speed": data[0].get("dailyValue", "N/A"),
+            "wind_speed_unit": "m/s",
+            "wind_direction": data[1].get("dailyValue", "N/A"),
+            "wind_direction_unit": "degrees"
+        }
+    else:
+        return {"error": "Could not fetch wind data"}
+
 @router.get("/weather/{date}/{lat}/{lon}")
 def get_weather(date: str, lat: float, lon: float):
     params = {
