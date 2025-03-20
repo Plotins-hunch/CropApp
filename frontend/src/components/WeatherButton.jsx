@@ -16,7 +16,7 @@ function WeatherButton() {
         const lat = 47.5596;  // Example: Zürich coordinates
         const lon = 7.5886;
 
-        const response = await fetch(`/api/weather/${today}/${lat}/${lon}`);
+        const response = await fetch(`/weather/${today}/${lat}/${lon}`);
         if (!response.ok) {
           throw new Error(`Network response was not ok (status: ${response.status})`);
         }
