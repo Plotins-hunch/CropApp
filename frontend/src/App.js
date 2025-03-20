@@ -7,6 +7,7 @@ import FieldHealthDashboard from './components/FieldHealthDashboard';
 import ProductRecommendation from './components/ProductRecommendation';
 import TimeSlider from './components/TimeSlider';
 import FieldLegend from './components/FieldLegend'; // Add this import
+import FeedbackButton from './components/FeedbackButton';
 
 function App() {
   const [timeState, setTimeState] = useState('present');
@@ -37,6 +38,7 @@ function App() {
           <FieldHealthDashboard fieldId={1} timeState={timeState} />
           <FieldLegend /> {/* Add the component here */}
           <ProductRecommendation cropType="corn" timeState={timeState} />
+          <FeedbackButton />
         </div>
       </main>
       
