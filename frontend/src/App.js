@@ -5,7 +5,8 @@ import './App.css';
 import WeatherButton from './components/WeatherButton';
 import FieldHealthDashboard from './components/FieldHealthDashboard';
 import ProductRecommendation from './components/ProductRecommendation';
-import TimeSlider from './components/TimeSlider';  // Changed from TimeShifter
+import TimeSlider from './components/TimeSlider';
+import FieldLegend from './components/FieldLegend'; // Add this import
 
 function App() {
   const [timeState, setTimeState] = useState('present');
@@ -34,6 +35,7 @@ function App() {
         <div className="container mx-auto px-4 py-8">
           <TimeSlider onTimeChange={handleTimeChange} />
           <FieldHealthDashboard fieldId={1} timeState={timeState} />
+          <FieldLegend /> {/* Add the component here */}
           <ProductRecommendation cropType="corn" timeState={timeState} />
         </div>
       </main>
