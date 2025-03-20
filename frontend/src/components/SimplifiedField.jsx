@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Field.css';
 import Weather from './Weather';
 import FieldTooltip from './FieldTooltip';
-import FarmerAdvisor from './FarmerAdvisor'; // Import the FarmerAdvisor component
 
 const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weather, withTreatment = false }) => {
   const getContent = () => {
@@ -57,16 +56,7 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weath
         gridColumn: x + 1,
         gridRow: y + 1
       }}
-      onMouseEnter={(e) => {
-        // Use mouse coordinates directly instead of tile position
-        onHover(
-          { x, y, type, moisture }, 
-          { 
-            x: e.clientX, // Use the mouse X position
-            y: e.clientY  // Use the mouse Y position
-          }
-        );
-      }}
+      onMouseEnter={(e) => onHover({ x, y, type, moisture }, { x: e.clientX, y: e.clientY })}
       onMouseLeave={() => onHover(null, null)}
     >
       {getContent()}
@@ -93,7 +83,7 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weath
   );
 };
 
-const Field = ({ weather = 'sunny', withTreatment = false }) => {
+const SimplifiedField = ({ weather = 'sunny', withTreatment = false }) => {
   const [hoveredTile, setHoveredTile] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState(null);
   
@@ -228,32 +218,29 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
     }
   };
 
+  // Calculate health status based on weather and treatment
+  const getFieldHealth = () => {
+    if (weather === 'rainy') {
+      return withTreatment ? 'Good' : 'Fair';
+    } else if (weather === 'sunny') {
+      return withTreatment ? 'Good' : 'Poor';
+    } else {
+      return withTreatment ? 'Excellent' : 'Good';
+    }
+  };
+
   return (
     <div className={`field-container ${weather}-weather`}>
       {/* Weather component provides the environment */}
       <Weather type={weather} />
       
-      {/* Isometric field sits on top of the landscape - centered properly and pushed down */}
-      <div className="isometric-field" style={{
-        position: 'absolute',
-        top: '35%',  /* Increased from 20% to 35% to push it down */
-        left: '50%',
-        width: '80%',
-        height: '70%',
-        transform: 'translateX(-50%)',
-        transformStyle: 'preserve-3d',
-        perspective: '1000px',
-        zIndex: 5
-      }}>
+      {/* Isometric field sits on top of the landscape */}
+      <div className="isometric-field">
         {/* Weather effects specific to the field */}
         {renderFieldWeatherEffects()}
         
-        {/* Field grid - centered */}
-        <div className="field-grid" style={{
-          width: '100%',
-          height: '100%',
-          margin: '0 auto'
-        }}>
+        {/* Field grid */}
+        <div className="field-grid">
           {fieldLayout.map((row, y) => (
             row.map((tileType, x) => (
               <FieldTile 
@@ -278,46 +265,24 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
         <FieldTooltip 
           tile={hoveredTile} 
           position={tooltipPosition}
-          isIsometric={true} // Indicate that this is an isometric view
+          treatment={withTreatment}
         />
       )}
       
-      {/* Field info panel */}
-      <div className="field-info-panel">
-        <h2>Your Field Status</h2>
-        <div className="status-item">
-          <span className="status-label">Weather:</span>
-          <span className="status-value">{weather.charAt(0).toUpperCase() + weather.slice(1)}</span>
+      {/* Simplified field status indicator */}
+      <div className="field-status-indicator">
+        <div className={`status-badge ${getFieldHealth().toLowerCase()}`}>
+          {getFieldHealth()} Health
         </div>
-        <div className="status-item">
-          <span className="status-label">Soil Moisture:</span>
-          <span className="status-value">
-            {weather === 'rainy' ? 'High' : 
-             weather === 'sunny' && !withTreatment ? 'Low' : 'Medium'}
-          </span>
-        </div>
-        <div className="status-item">
-          <span className="status-label">Risk:</span>
-          <span className={`status-value ${weather === 'sunny' && !withTreatment ? 'warning' : ''}`}>
-            {weather === 'sunny' && !withTreatment ? 'Drought' : 
-             weather === 'rainy' && !withTreatment ? 'Waterlogging' : 'Low'}
-          </span>
-        </div>
+        
         {withTreatment && (
-          <div className="treatment-indicator">
-            <span>✓ Biological Products Applied</span>
+          <div className="treatment-badge">
+            Biologicals Active
           </div>
         )}
       </div>
-      
-      {/* Add the FarmerAdvisor component at the bottom left */}
-      <FarmerAdvisor 
-        weather={weather} 
-        cropType={hoveredTile?.type || "corn"} 
-        withTreatment={withTreatment} 
-      />
     </div>
   );
 };
 
-export default Field;
+export default SimplifiedField;

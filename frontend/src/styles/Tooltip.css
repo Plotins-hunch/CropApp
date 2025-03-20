@@ -1,0 +1,99 @@
+/* Simple Stardew Valley styled tooltip */
+.stardew-tooltip {
+    background-color: #fffacd;
+    border: 3px solid #6e4a1f;
+    border-radius: 4px;
+    padding: 12px;
+    color: #513718;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Tooltip title */
+  .tooltip-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    margin: 0 0 10px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #6e4a1f;
+    color: #513718;
+    text-align: center;
+  }
+  
+  /* Data rows */
+  .tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  
+  .tooltip-label {
+    font-weight: bold;
+    color: #513718;
+    margin-right: 10px;
+  }
+  
+  /* Risk levels */
+  .risk-level-low {
+    color: #3caea3;
+  }
+  
+  .risk-level-medium {
+    color: #f9dc5c;
+  }
+  
+  .risk-level-high {
+    color: #e84855;
+  }
+  
+  /* Warning box */
+  .tooltip-warning {
+    margin: 8px 0;
+    padding: 4px;
+    background-color: rgba(232, 72, 85, 0.2);
+    border-radius: 4px;
+    text-align: center;
+    color: #e84855;
+    font-size: 14px;
+  }
+  
+  /* Sections */
+  .tooltip-section {
+    margin-top: 8px;
+  }
+  
+  .tooltip-section h4 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    margin: 0 0 6px 0;
+    color: #513718;
+  }
+  
+  /* Lists */
+  .tooltip-list {
+    margin: 0;
+    padding-left: 15px;
+    list-style-type: none;
+  }
+  
+  .tooltip-list-item {
+    padding: 2px 0;
+    position: relative;
+  }
+  
+  .tooltip-list-item::before {
+    content: '→';
+    position: absolute;
+    left: -12px;
+    color: #58A63C;
+  }
+  
+  /* Loading state */
+  .tooltip-loading {
+    text-align: center;
+    color: #513718;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+  }

@@ -1,51 +1,402 @@
+/* App.css - Main layout styles with Stardew Valley theme */
+
+/* Root variables to maintain the Stardew Valley color palette */
+:root {
+  --stardew-green-light: #a9db7a;
+  --stardew-green: #58A63C;
+  --stardew-green-dark: #3D7D27;
+  --stardew-dirt: #b98d4f;
+  --stardew-dirt-dark: #8a6837;
+  --stardew-dirt-darkest: #5c4425;
+  --stardew-water: #5dbcd2;
+  --stardew-water-dark: #3e97ae;
+  --stardew-blue-dark: #274679;
+  --stardew-sky-day: #88d9e6;
+  --stardew-sky-night: #162340;
+  --stardew-sky-sunset: #ffcf6b;
+
+  /* UI Colors */
+  --stardew-wood: #916a3d;
+  --stardew-wood-dark: #6e4a1f;
+  --stardew-cream: #fffacd;
+  --stardew-orange: #f5a442;
+  --stardew-text-dark: #513718;
+
+  /* Status Colors */
+  --stardew-danger: #e84855;
+  --stardew-warning: #f9dc5c;
+  --stardew-good: #3caea3;
+}
+
+/* Import the pixel fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+/* Apply pixel rendering to all images */
+img {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Basic layout */
+body {
+  margin: 0;
+  font-family: 'VT323', monospace;
+  background-color: var(--stardew-green);
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20h20v20H0zM20 0h20v20H20z' fill='%233D7D27' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
 .App {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
+/* Header styles */
 .App-header {
-  background-color: #3D7D27;
-  min-height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-bottom: 4px solid var(--stardew-wood-dark);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.logo {
   display: flex;
   align-items: center;
-  font-size: calc(10px + 1vmin);
-  color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  gap: 12px;
 }
 
-.App-link {
-  color: #61dafb;
+.logo-icon {
+  color: var(--stardew-cream);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.app-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 20px;
+  color: var(--stardew-cream);
+  margin: 0;
+  text-shadow: 2px 2px 0 var(--stardew-wood-dark);
+}
+
+/* Main content layout */
+.app-content {
+  display: grid;
+  grid-template-columns: 300px 1fr 300px;
+  gap: 16px;
+  padding: 0 16px;
+  flex-grow: 1;
+}
+
+@media (max-width: 1200px) {
+  .app-content {
+    grid-template-columns: 250px 1fr 250px;
   }
-  to {
-    transform: rotate(360deg);
+}
+
+@media (max-width: 992px) {
+  .app-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  
+  .sidebar-left, .sidebar-right {
+    order: 2;
+  }
+  
+  .main-content {
+    order: 1;
   }
 }
 
-.weather-wrapper {
+/* Sidebar styling */
+.sidebar-left, .sidebar-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Panel styling */
+.sidebar-panel {
+  background-color: var(--stardew-wood);
+  border: 4px solid var(--stardew-wood-dark);
+  border-radius: 8px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--stardew-wood-dark);
+  color: var(--stardew-cream);
+  cursor: pointer;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-icon {
+  color: var(--stardew-cream);
+}
+
+.panel-title h2 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  margin: 0;
+}
+
+.panel-toggle-icon {
+  color: var(--stardew-cream);
+  transition: transform 0.3s ease;
+}
+
+.panel-content {
+  padding: 16px;
+  max-height: 800px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+/* Scrollbar styling */
+.panel-content::-webkit-scrollbar {
+  width: 12px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+  background: var(--stardew-wood-dark);
+  border-radius: 4px;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+  background-color: var(--stardew-dirt);
+  border-radius: 4px;
+  border: 2px solid var(--stardew-wood-dark);
+}
+
+/* Collapsed panel styling */
+.sidebar-panel.collapsed .panel-content {
+  max-height: 0;
+  padding: 0 16px;
+  overflow: hidden;
+}
+
+/* Main content area */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: fit-content;
+  align-self: flex-start;
+}
+
+.field-container {
+  height: 600px;
+  min-height: 600px;
+  max-height: 600px;
+  background-color: var(--stardew-green);
+  border: 4px solid var(--stardew-wood-dark);
+  border-radius: 8px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  overflow: hidden;
   position: relative;
-  width: 100%;
-  height: 0; /* Change to 0 to prevent extra space */
-  padding: 1rem;
+  flex-shrink: 0; /* Prevents container from shrinking */
+  flex-grow: 0; /* Prevents container from growing */
 }
 
-.weather-wrapper > * {
+.field-controls {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  background-color: var(--stardew-wood);
+  border: 4px solid var(--stardew-wood-dark);
+  border-radius: 8px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Toggle switch styling */
+.treatment-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--stardew-cream);
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
   position: absolute;
-  right: 20px;
-  top: 20px; /* Adjust this value to control distance from header */
-  z-index: 10;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--stardew-dirt-dark);
+  transition: .4s;
+  border-radius: 30px;
+  border: 2px solid var(--stardew-dirt-darkest);
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 2px;
+  background-color: var(--stardew-cream);
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--stardew-green);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(28px);
+}
+
+/* Footer styling */
+.app-footer {
+  margin-top: 24px;
+  padding: 16px;
+  text-align: center;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--stardew-cream);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Historical chart styling */
+.historical-chart {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: var(--stardew-cream);
+  border: 3px solid var(--stardew-wood-dark);
+  color: var(--stardew-text-dark);
+}
+
+.historical-chart h3 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: var(--stardew-text-dark);
+}
+
+.chart-container {
+  height: 200px;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.chart-bars {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 180px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--stardew-dirt-dark);
+}
+
+.chart-bar-group {
+  display: flex;
+  gap: 5px;
+  height: 100%;
+  align-items: flex-end;
+  flex-basis: 14%;
+}
+
+.chart-bar {
+  flex: 1;
+  min-width: 15px;
+  max-width: 30px;
+  background-color: var(--stardew-green);
+  transition: height 1s ease;
+}
+
+.chart-bar.your-yield {
+  background-color: var(--stardew-green);
+}
+
+.chart-bar.average-yield {
+  background-color: var(--stardew-dirt);
+}
+
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.chart-label {
+  flex-basis: 14%;
+  text-align: center;
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--stardew-text-dark);
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+}
+
+.legend-color.your-yield {
+  background-color: var(--stardew-green);
+}
+
+.legend-color.average-yield {
+  background-color: var(--stardew-dirt);
+}
+
+/* Animation keyframes */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+}
+
+/* Apply pixel art styling to all SVG icons */
+svg {
+  shape-rendering: crispEdges;
 }

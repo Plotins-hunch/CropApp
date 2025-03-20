@@ -1,0 +1,246 @@
+/* HistoricalChart.css - Stardew Valley styled chart */
+
+.historical-chart {
+    background-color: var(--stardew-cream);
+    border: 3px solid var(--stardew-wood-dark);
+    border-radius: 8px;
+    padding: 16px;
+    color: var(--stardew-text-dark);
+    margin-bottom: 16px;
+  }
+  
+  .chart-header {
+    margin-bottom: 16px;
+  }
+  
+  .chart-header h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: var(--stardew-text-dark);
+  }
+  
+  .chart-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .view-type-controls {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .view-type-button {
+    background-color: var(--stardew-dirt);
+    border: 2px solid var(--stardew-dirt-dark);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: var(--stardew-text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .view-type-button:hover {
+    background-color: var(--stardew-dirt-dark);
+    color: var(--stardew-cream);
+  }
+  
+  .view-type-button.active {
+    background-color: var(--stardew-green);
+    border-color: var(--stardew-green-dark);
+    color: var(--stardew-cream);
+  }
+  
+  .year-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .year-nav-button {
+    background: none;
+    border: none;
+    color: var(--stardew-wood);
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  
+  .year-nav-button:hover {
+    color: var(--stardew-green);
+  }
+  
+  .year-nav-button:disabled {
+    color: var(--stardew-dirt);
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .year-display {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    color: var(--stardew-text-dark);
+  }
+  
+  .chart-container {
+    position: relative;
+    height: 250px;
+    margin-left: 30px;
+    margin-bottom: 30px;
+    border-left: 2px solid var(--stardew-dirt-dark);
+    border-bottom: 2px solid var(--stardew-dirt-dark);
+  }
+  
+  .chart-y-axis {
+    position: absolute;
+    left: -30px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+  }
+  
+  .y-axis-label {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    color: var(--stardew-text-dark);
+    text-align: right;
+    width: 30px;
+  }
+  
+  .chart-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+  
+  .grid-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: rgba(81, 55, 24, 0.1);
+  }
+  
+  .chart-bars {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 100%;
+    width: 100%;
+    padding-bottom: 5px;
+  }
+  
+  .chart-bar-group {
+    display: flex;
+    gap: 4px;
+    height: 100%;
+    align-items: flex-end;
+  }
+  
+  .chart-bar {
+    width: 12px;
+    background-color: var(--stardew-green);
+    transition: height 1s ease;
+    position: relative;
+  }
+  
+  .chart-bar:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--stardew-cream);
+    border: 2px solid var(--stardew-wood-dark);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    color: var(--stardew-text-dark);
+    white-space: nowrap;
+    z-index: 10;
+  }
+  
+  .chart-bar.your-data {
+    background-color: var(--stardew-green);
+  }
+  
+  .chart-bar.regional-avg {
+    background-color: var(--stardew-dirt);
+  }
+  
+  .chart-bar.with-biologicals {
+    background-color: var(--stardew-good);
+  }
+  
+  .chart-x-axis {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 8px;
+  }
+  
+  .x-axis-label {
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: var(--stardew-text-dark);
+    text-align: center;
+    width: 40px;
+  }
+  
+  .chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .legend-color {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .legend-color.your-data {
+    background-color: var(--stardew-green);
+  }
+  
+  .legend-color.regional-avg {
+    background-color: var(--stardew-dirt);
+  }
+  
+  .legend-color.with-biologicals {
+    background-color: var(--stardew-good);
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .chart-controls {
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .view-type-controls {
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    .chart-bar {
+      width: 8px;
+    }
+  }

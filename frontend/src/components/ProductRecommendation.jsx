@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/ProductRecommendation.css';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const ProductRecommendation = ({ fieldId = 1, cropType = "corn", lat = 47.5596, lon = 7.5886 }) => {
   const [products, setProducts] = useState([
@@ -9,6 +10,7 @@ const ProductRecommendation = ({ fieldId = 1, cropType = "corn", lat = 47.5596, 
   ]);
   const [comparing, setComparing] = useState(false);
   const [error, setError] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const compareAll = async () => {
     try {
@@ -59,9 +61,23 @@ const ProductRecommendation = ({ fieldId = 1, cropType = "corn", lat = 47.5596, 
     setError(null);
   };
 
+  const nextProduct = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === products.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const prevProduct = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? products.length - 1 : prevIndex - 1
+    );
+  };
+
+  const currentProduct = products[currentIndex];
+
   return (
     <div className="product-recommendation stardew-panel">
-      <h2 className="recommendation-title">Product Recommendations</h2>
+      <h2 className="recommendation-title">Products</h2>
       
       {error && (
         <div className="error-message">
@@ -70,22 +86,49 @@ const ProductRecommendation = ({ fieldId = 1, cropType = "corn", lat = 47.5596, 
         </div>
       )}
       
-      <div className="products-grid">
-        {products.map((product) => (
-          <div key={product.id} className="product-card">
-            <div className="product-icon">{product.icon}</div>
-            <h3 className="product-name">{product.name}</h3>
-            <p className="product-description">{product.description}</p>
+      <div className="product-carousel">
+        <button 
+          className="carousel-nav-button prev-button" 
+          onClick={prevProduct}
+          aria-label="Previous product"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        
+        <div className="carousel-window">
+          <div className="product-card">
+            <div className="product-icon">{currentProduct.icon}</div>
+            <h3 className="product-name">{currentProduct.name}</h3>
+            <p className="product-description">{currentProduct.description}</p>
             <div className="effectiveness-meter">
               <div 
                 className="effectiveness-fill" 
-                style={{ width: `${product.effectiveness}%` }}
+                style={{ width: `${currentProduct.effectiveness}%` }}
               ></div>
               <span className="effectiveness-label">
-                {product.loading ? 'Calculating...' : `${product.effectiveness}% Effective`}
+                {currentProduct.loading ? 'Calculating...' : `${currentProduct.effectiveness}% Effective`}
               </span>
             </div>
           </div>
+        </div>
+        
+        <button 
+          className="carousel-nav-button next-button" 
+          onClick={nextProduct}
+          aria-label="Next product"
+        >
+          <ChevronRight size={20} />
+        </button>
+      </div>
+      
+      <div className="carousel-indicators">
+        {products.map((_, index) => (
+          <button 
+            key={index}
+            className={`indicator-dot ${index === currentIndex ? 'active' : ''}`}
+            onClick={() => setCurrentIndex(index)}
+            aria-label={`Go to product ${index + 1}`}
+          />
         ))}
       </div>
       

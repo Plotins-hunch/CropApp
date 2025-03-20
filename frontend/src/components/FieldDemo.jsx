@@ -1,10 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Field from './Field';
 import { SunIcon, CloudIcon, CloudRainIcon } from 'lucide-react';
+import { getCurrentWeather } from '../services/weatherApi';
 
 const FieldDemo = () => {
   const [weather, setWeather] = useState('sunny');
   const [showComparison, setShowComparison] = useState(false);
+  const [useApiWeather, setUseApiWeather] = useState(false);
+  const [weatherData, setWeatherData] = useState(null);
+  
+  // Fetch weather from API when enabled
+  useEffect(() => {
+    if (!useApiWeather) return;
+    
+    const fetchWeather = async () => {
+      try {
+        const data = await getCurrentWeather();
+        
+        if (data && data.type) {
+          setWeather(data.type);
+          setWeatherData(data);
+          console.log('Weather updated from API:', data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch weather:', error);
+      }
+    };
+    
+    // Fetch weather initially
+    fetchWeather();
+    
+    // Set up interval to refresh weather every 10 minutes
+    const intervalId = setInterval(fetchWeather, 600000);
+    
+    // Clean up interval on component unmount or when API weather is disabled
+    return () => clearInterval(intervalId);
+  }, [useApiWeather]);
   
   return (
     <div className="field-demo-container">
@@ -15,27 +46,58 @@ const FieldDemo = () => {
       
       <div className="demo-controls stardew-panel">
         <div className="control-group">
-          <h3>Weather Conditions</h3>
-          <div className="weather-buttons">
-            <button 
-              className={`stardew-button ${weather === 'sunny' ? 'active' : ''}`} 
-              onClick={() => setWeather('sunny')}
-            >
-              <SunIcon size={16} /> Sunny
-            </button>
-            <button 
-              className={`stardew-button ${weather === 'cloudy' ? 'active' : ''}`} 
-              onClick={() => setWeather('cloudy')}
-            >
-              <CloudIcon size={16} /> Cloudy
-            </button>
-            <button 
-              className={`stardew-button ${weather === 'rainy' ? 'active' : ''}`} 
-              onClick={() => setWeather('rainy')}
-            >
-              <CloudRainIcon size={16} /> Rainy
-            </button>
+          <h3>Weather Control</h3>
+          <div className="api-weather-toggle">
+            <span>Manual</span>
+            <label className="toggle-switch">
+              <input 
+                type="checkbox" 
+                checked={useApiWeather} 
+                onChange={() => setUseApiWeather(!useApiWeather)}
+              />
+              <span className="toggle-slider"></span>
+            </label>
+            <span>API Weather</span>
           </div>
+          
+          {!useApiWeather && (
+            <div className="weather-buttons">
+              <button 
+                className={`stardew-button ${weather === 'sunny' ? 'active' : ''}`} 
+                onClick={() => setWeather('sunny')}
+              >
+                <SunIcon size={16} /> Sunny
+              </button>
+              <button 
+                className={`stardew-button ${weather === 'cloudy' ? 'active' : ''}`} 
+                onClick={() => setWeather('cloudy')}
+              >
+                <CloudIcon size={16} /> Cloudy
+              </button>
+              <button 
+                className={`stardew-button ${weather === 'rainy' ? 'active' : ''}`} 
+                onClick={() => setWeather('rainy')}
+              >
+                <CloudRainIcon size={16} /> Rainy
+              </button>
+            </div>
+          )}
+          
+          {useApiWeather && weatherData && (
+            <div className="current-weather-display">
+              <div className="current-weather-icon">
+                {weather === 'sunny' && <SunIcon size={24} />}
+                {weather === 'cloudy' && <CloudIcon size={24} />}
+                {weather === 'rainy' && <CloudRainIcon size={24} />}
+              </div>
+              <div className="current-weather-text">
+                <p>Current: {weather.charAt(0).toUpperCase() + weather.slice(1)}</p>
+                {weatherData.temperature && (
+                  <p>{weatherData.temperature}°C</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
         
         <div className="control-group">
@@ -85,12 +147,14 @@ const FieldDemo = () => {
       </div>
       
       <style jsx>{`
+        /* Main container */
         .field-demo-container {
           max-width: 1200px;
           margin: 0 auto;
           padding: 20px;
         }
         
+        /* Header styling */
         .demo-header {
           text-align: center;
           margin-bottom: 20px;
@@ -106,6 +170,7 @@ const FieldDemo = () => {
           font-size: 18px;
         }
         
+        /* Controls panel */
         .demo-controls {
           display: flex;
           justify-content: space-between;
@@ -123,6 +188,47 @@ const FieldDemo = () => {
           margin-bottom: 10px;
         }
         
+        /* Weather API toggle */
+        .api-weather-toggle {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 12px;
+          font-family: 'VT323', monospace;
+          font-size: 16px;
+        }
+        
+        /* Current weather display */
+        .current-weather-display {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          margin-top: 10px;
+          padding: 8px;
+          background-color: rgba(255, 250, 205, 0.1);
+          border-radius: 4px;
+          border: 1px solid rgba(255, 250, 205, 0.3);
+        }
+        
+        .current-weather-icon {
+          color: var(--stardew-cream);
+          display: flex;
+          align-items: center;
+        }
+        
+        .current-weather-text {
+          font-family: 'VT323', monospace;
+          font-size: 16px;
+          color: var(--stardew-cream);
+        }
+        
+        .current-weather-text p {
+          margin: 0;
+          line-height: 1.2;
+        }
+        
+        /* Weather button styling */
         .weather-buttons {
           display: flex;
           gap: 10px;
@@ -138,6 +244,7 @@ const FieldDemo = () => {
           background-color: #3D7D27;
         }
         
+        /* Comparison toggle */
         .comparison-toggle {
           display: flex;
           align-items: center;
@@ -192,6 +299,7 @@ const FieldDemo = () => {
           transform: translateX(30px);
         }
         
+        /* Field visualization */
         .field-visualization {
           margin-bottom: 20px;
           min-height: 600px;
@@ -220,6 +328,71 @@ const FieldDemo = () => {
           z-index: 10;
         }
         
+        /* Legend styling */
+        .field-legend {
+          margin-bottom: 20px;
+        }
+        
+        .field-legend h2 {
+          font-size: 16px;
+          text-align: center;
+          margin-bottom: 15px;
+        }
+        
+        .legend-items {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 15px;
+        }
+        
+        .legend-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        
+        .legend-color {
+          width: 24px;
+          height: 24px;
+          border: 2px solid #6e4a1f;
+        }
+        
+        .legend-color.grass {
+          background-color: #58A63C;
+        }
+        
+        .legend-color.water {
+          background-color: #5dbcd2;
+        }
+        
+        .legend-color.moisture-dry {
+          background-color: #d4b483;
+        }
+        
+        .legend-color.moisture-wet {
+          background-color: #58A63C;
+          background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h6v6H0zm12 0h6v6h-6zM0 12h6v6H0zm12 12h6v6h-6z' fill='%233e97ae' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        
+        .legend-color.corn-color {
+          background-color: #a9db7a;
+        }
+        
+        .legend-color.wheat-color {
+          background-color: #f9dc5c;
+        }
+        
+        .legend-color.soybean-color {
+          background-color: #a9db7a;
+          background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='2' fill='%2358A63C'/%3E%3C/svg%3E");
+        }
+        
+        .legend-label {
+          font-family: 'VT323', monospace;
+          font-size: 16px;
+        }
+        
+        /* Insights panel */
         .field-insights {
           margin-bottom: 20px;
         }
@@ -227,6 +400,7 @@ const FieldDemo = () => {
         .field-insights h2 {
           font-size: 16px;
           text-align: center;
+          margin-bottom: 15px;
           margin-bottom: 15px;
         }
         
@@ -242,6 +416,22 @@ const FieldDemo = () => {
           margin: 0 auto;
           font-size: 14px;
           padding: 10px 20px;
+        }
+        
+        /* Media query for responsive design */
+        @media (max-width: 768px) {
+          .demo-controls {
+            flex-direction: column;
+            gap: 15px;
+          }
+          
+          .comparison-view {
+            flex-direction: column;
+          }
+          
+          .comparison-half {
+            margin-bottom: 40px;
+          }
         }
       `}</style>
     </div>
