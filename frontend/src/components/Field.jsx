@@ -1,26 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/Field.css';
 import Weather from './Weather';
+import FieldTooltip from './FieldTooltip';
 
-const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weather }) => {
+const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weather, withTreatment = false }) => {
   const getContent = () => {
     switch (type) {
       case 'corn':
         return (
           <div className="tile-content">
-            <div className="crop-icon corn-icon"></div>
+            <div className={`crop-icon corn-icon ${moisture === 'dry' && !withTreatment ? 'stressed' : ''}`}></div>
           </div>
         );
       case 'wheat':
         return (
           <div className="tile-content">
-            <div className="crop-icon wheat-icon"></div>
+            <div className={`crop-icon wheat-icon ${moisture === 'dry' && !withTreatment ? 'stressed' : ''}`}></div>
           </div>
         );
       case 'soybean':
         return (
           <div className="tile-content">
-            <div className="crop-icon soybean-icon"></div>
+            <div className={`crop-icon soybean-icon ${moisture === 'dry' && !withTreatment ? 'stressed' : ''}`}></div>
           </div>
         );
       case 'tree':
@@ -37,6 +38,11 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weath
   // Apply weather-specific classes to tiles
   let tileClasses = `field-tile ${type} ${moisture || ''} ${isHovered ? 'hovered' : ''}`;
   
+  // Add treatment class for visual difference when biological products are applied
+  if (withTreatment) {
+    tileClasses += ' with-treatment';
+  }
+
   // Add weather effect classes
   if (weather === 'rainy') tileClasses += ' rain-effect';
   if (weather === 'sunny' && moisture === 'dry') tileClasses += ' sun-effect';
@@ -50,8 +56,8 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weath
         gridColumn: x + 1,
         gridRow: y + 1
       }}
-      onMouseEnter={() => onHover({ x, y, type, moisture })}
-      onMouseLeave={() => onHover(null)}
+      onMouseEnter={(e) => onHover({ x, y, type, moisture }, { x: e.clientX, y: e.clientY })}
+      onMouseLeave={() => onHover(null, null)}
     >
       {getContent()}
       
@@ -77,9 +83,9 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weath
   );
 };
 
-const Field = ({ weather = 'sunny' }) => {
+const Field = ({ weather = 'sunny', withTreatment = false }) => {
   const [hoveredTile, setHoveredTile] = useState(null);
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipPosition, setTooltipPosition] = useState(null);
   
   // Define field layout with rows and columns
   const fieldLayout = [
@@ -98,25 +104,68 @@ const Field = ({ weather = 'sunny' }) => {
     ['grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass', 'grass'],
   ];
 
-  // Soil moisture map
-  const moistureMap = [
-    ['', '', '', '', '', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', 'wet', 'wet', '', '', '', '', ''],
-    ['', '', '', 'wet', 'wet', 'wet', 'wet', '', '', '', '', ''],
-    ['', '', '', '', 'wet', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', '', '', 'dry', 'dry', ''],
-    ['', '', '', '', '', '', '', 'dry', 'dry', 'dry', 'dry', ''],
-    ['', 'dry', 'dry', '', '', '', '', 'dry', 'dry', 'dry', '', ''],
-    ['', '', '', '', '', '', '', '', '', '', '', ''],
-  ];
+  // Soil moisture map - adjusts based on weather and treatment
+  const getMoistureMap = () => {
+    // Base moisture map
+    const baseMoistureMap = [
+      ['', '', '', '', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', 'wet', 'wet', '', '', '', '', ''],
+      ['', '', '', 'wet', 'wet', 'wet', 'wet', '', '', '', '', ''],
+      ['', '', '', '', 'wet', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', '', 'dry', 'dry', ''],
+      ['', '', '', '', '', '', '', 'dry', 'dry', 'dry', 'dry', ''],
+      ['', 'dry', 'dry', '', '', '', '', 'dry', 'dry', 'dry', '', ''],
+      ['', '', '', '', '', '', '', '', '', '', '', ''],
+    ];
+    
+    // For rainy weather, reduce dry areas
+    if (weather === 'rainy') {
+      return baseMoistureMap.map(row => 
+        row.map(cell => cell === 'dry' ? '' : cell)
+      );
+    }
+    
+    // For sunny weather, increase dry areas unless treatment is applied
+    if (weather === 'sunny' && !withTreatment) {
+      return baseMoistureMap.map((row, y) => 
+        row.map((cell, x) => {
+          // Add more dry areas during sunny weather
+          if (y > 7 && x > 3 && x < 10 && cell === '') {
+            return 'dry';
+          }
+          // Make existing dry areas stay dry
+          return cell;
+        })
+      );
+    }
+    
+    // For sunny weather with treatment, improve some dry areas
+    if (weather === 'sunny' && withTreatment) {
+      return baseMoistureMap.map((row, y) => 
+        row.map((cell, x) => {
+          // Treatment helps some dry areas
+          if ((y === 10 && (x === 1 || x === 2)) || (y === 9 && x > 7)) {
+            return '';
+          }
+          return cell;
+        })
+      );
+    }
+    
+    return baseMoistureMap;
+  };
+  
+  // Get the current moisture map based on weather and treatment
+  const moistureMap = getMoistureMap();
 
-  const handleTileHover = (tileInfo) => {
+  // Handle tile hover with position information
+  const handleTileHover = (tileInfo, position) => {
     setHoveredTile(tileInfo);
-    setShowTooltip(!!tileInfo);
+    setTooltipPosition(position);
   };
 
   // Check if a tile is on the edge of the field
@@ -169,47 +218,6 @@ const Field = ({ weather = 'sunny' }) => {
     }
   };
 
-  const renderTooltip = () => {
-    if (!showTooltip || !hoveredTile) return null;
-
-    let content = '';
-    const { type, moisture } = hoveredTile;
-
-    switch(type) {
-      case 'corn':
-        content = `Corn: ${moisture === 'dry' ? 'Needs water!' : 'Growing well'} - Harvest in 14 days`;
-        break;
-      case 'wheat':
-        content = `Wheat: ${moisture === 'dry' ? 'Needs water!' : 'Growing well'} - Harvest in 8 days`;
-        break;
-      case 'soybean':
-        content = `Soybean: ${moisture === 'dry' ? 'Needs water!' : 'Growing well'} - Harvest in 21 days`;
-        break;
-      case 'water':
-        content = 'Water: Good for irrigation';
-        break;
-      case 'tree':
-        content = 'Tree: Provides shade and helps maintain soil moisture';
-        break;
-      default:
-        content = moisture === 'dry' ? 'Dry soil: Needs watering soon!' : 
-                 moisture === 'wet' ? 'Well-watered soil' : 'Field grass';
-    }
-
-    // Position tooltip based on hover position
-    const tooltipStyle = {
-      top: '70%',
-      left: '50%',
-      transform: 'translateX(-50%)'
-    };
-
-    return (
-      <div className="field-tooltip" style={tooltipStyle}>
-        {content}
-      </div>
-    );
-  };
-
   return (
     <div className={`field-container ${weather}-weather`}>
       {/* Weather component provides the environment */}
@@ -234,6 +242,7 @@ const Field = ({ weather = 'sunny' }) => {
                 isHovered={hoveredTile && hoveredTile.x === x && hoveredTile.y === y}
                 isEdgeTile={isEdgeTile(x, y)}
                 weather={weather}
+                withTreatment={withTreatment}
               />
             ))
           ))}
@@ -241,25 +250,39 @@ const Field = ({ weather = 'sunny' }) => {
       </div>
       
       {/* Field tooltip */}
-      {renderTooltip()}
+      {hoveredTile && tooltipPosition && (
+        <FieldTooltip 
+          tile={hoveredTile} 
+          position={tooltipPosition}
+        />
+      )}
       
       {/* Field info panel */}
       <div className="field-info-panel">
         <h2>Your Field Status</h2>
         <div className="status-item">
           <span className="status-label">Weather:</span>
-          <span className="status-value">{weather}</span>
+          <span className="status-value">{weather.charAt(0).toUpperCase() + weather.slice(1)}</span>
         </div>
         <div className="status-item">
           <span className="status-label">Soil Moisture:</span>
-          <span className="status-value">Medium</span>
+          <span className="status-value">
+            {weather === 'rainy' ? 'High' : 
+             weather === 'sunny' && !withTreatment ? 'Low' : 'Medium'}
+          </span>
         </div>
         <div className="status-item">
           <span className="status-label">Risk:</span>
-          <span className={`status-value ${weather === 'sunny' ? 'warning' : ''}`}>
-            {weather === 'sunny' ? 'Drought' : 'Low'}
+          <span className={`status-value ${weather === 'sunny' && !withTreatment ? 'warning' : ''}`}>
+            {weather === 'sunny' && !withTreatment ? 'Drought' : 
+             weather === 'rainy' && !withTreatment ? 'Waterlogging' : 'Low'}
           </span>
         </div>
+        {withTreatment && (
+          <div className="treatment-indicator">
+            <span>✓ Biological Products Applied</span>
+          </div>
+        )}
       </div>
     </div>
   );

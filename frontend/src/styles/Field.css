@@ -232,12 +232,56 @@
   align-items: center;
 }
 
+
 .crop-icon {
   width: 80%;
   height: 80%;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+/* Regular healthy crop icons */
+.corn-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,2L9,6H15L12,2M11,8H13V20H11V8Z' fill='%23f9dc5c'/%3E%3C/svg%3E");
+}
+
+.wheat-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,2L9,6L12,10L15,6L12,2M15,6L12,10L15,14L18,10L15,6M9,6L6,10L9,14L12,10L9,6M12,10L9,14L12,18L15,14L12,10M10,20H14V22H10V20Z' fill='%23f9dc5c'/%3E%3C/svg%3E");
+}
+
+.soybean-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18,12.5C18,13.88 16.88,15 15.5,15C14.12,15 13,13.88 13,12.5V10.42C13,9.5 12.5,8.76 11.73,8.3C11.85,8.21 12,8.14 12.13,8.07C12.39,7.96 12.69,7.88 13,7.82V5H11V3H13V1H15V3H17V5H15V7.82C15.31,7.88 15.61,7.96 15.87,8.07C17.18,8.59 18,9.97 18,11.5V12.5M2,15C2,13.62 3.12,12.5 4.5,12.5C5.88,12.5 7,13.62 7,15V17.08C7,18 7.5,18.74 8.27,19.2C8.15,19.29 8,19.36 7.87,19.43C7.61,19.54 7.31,19.62 7,19.68V22H9V24H7V23H5V24H3V22H5V19.68C4.69,19.62 4.39,19.54 4.13,19.43C2.82,18.91 2,17.53 2,16V15M8,12.5C8,11.12 9.12,10 10.5,10C11.88,10 13,11.12 13,12.5V15.08C13,16 13.5,16.74 14.27,17.2C14.15,17.29 14,17.36 13.87,17.43C13.61,17.54 13.31,17.62 13,17.68V20H15V22H13V21H11V22H9V20H11V17.68C10.69,17.62 10.39,17.54 10.13,17.43C8.82,16.91 8,15.53 8,14V12.5Z' fill='%23a9db7a'/%3E%3C/svg%3E");
+}
+
+.tree-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z' fill='%233D7D27'/%3E%3C/svg%3E");
+}
+
+/* Stressed crop icons (when dry and no treatment) */
+.crop-icon.stressed {
+  filter: saturate(0.7) brightness(0.85);
+  transform: scale(0.95) rotate(5deg);
+  animation: stressed-plant 2s ease-in-out infinite alternate;
+}
+
+/* Enhanced crops (with treatment) */
+.with-treatment .crop-icon {
+  filter: saturate(1.2) brightness(1.1);
+  transform: scale(1.05);
+}
+
+/* Enhanced stressed crops with treatment */
+.with-treatment .crop-icon.stressed {
+  filter: saturate(0.9) brightness(0.95);
+  transform: scale(1);
+  animation: none;
+}
+
+@keyframes stressed-plant {
+  0% { transform: scale(0.95) rotate(3deg); }
+  100% { transform: scale(0.92) rotate(-2deg); }
 }
 
 .corn-icon {
@@ -557,4 +601,56 @@
     width: 180px;
     font-size: 10px;
   }
+}
+
+
+/* Treatment indicator in the field info panel */
+.treatment-indicator {
+  margin-top: 12px;
+  padding: 8px;
+  background-color: rgba(57, 174, 163, 0.2);
+  border-radius: 4px;
+  text-align: center;
+  border: 1px solid #3caea3;
+  color: #fffacd;
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+}
+
+/* Stressed crop styling */
+.crop-icon.stressed {
+  filter: saturate(0.7) brightness(0.85);
+  transform: scale(0.95) rotate(5deg);
+  animation: stressed-plant 2s ease-in-out infinite alternate;
+}
+
+/* Enhanced crops (with treatment) */
+.with-treatment .crop-icon {
+  filter: saturate(1.2) brightness(1.1);
+  transform: scale(1.05);
+}
+
+/* Enhanced stressed crops with treatment */
+.with-treatment .crop-icon.stressed {
+  filter: saturate(0.9) brightness(0.95);
+  transform: scale(1);
+  animation: none;
+}
+
+/* Warning flash animation */
+@keyframes warning-flash {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
+/* Stressed plant animation */
+@keyframes stressed-plant {
+  0% { transform: scale(0.95) rotate(3deg); }
+  100% { transform: scale(0.92) rotate(-2deg); }
+}
+
+/* Ensure warning text flashes */
+.status-value.warning {
+  animation: warning-flash 2s infinite;
 }

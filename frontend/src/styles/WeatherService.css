@@ -1,0 +1,168 @@
+/* Weather Widget Styling - Stardew Valley inspired */
+
+.weather-widget {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 200px;
+    background-color: var(--stardew-wood);
+    border: 4px solid var(--stardew-wood-dark);
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--stardew-cream);
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    z-index: 50;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .weather-header {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .weather-header h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    margin: 0 0 8px 0;
+    color: var(--stardew-cream);
+  }
+  
+  .weather-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .weather-condition {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .weather-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 10px 0;
+    padding: 8px 0;
+    border-top: 2px dashed rgba(255, 250, 205, 0.3);
+    border-bottom: 2px dashed rgba(255, 250, 205, 0.3);
+  }
+  
+  .weather-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .weather-forecast {
+    margin-top: 8px;
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  .weather-forecast p {
+    margin: 0;
+    line-height: 1.2;
+  }
+  
+  /* Weather type specific styling */
+  .weather-widget.weather-sunny {
+    background-color: var(--stardew-wood);
+    background-image: linear-gradient(to bottom, rgba(245, 164, 66, 0.2), rgba(145, 106, 61, 0.2));
+  }
+  
+  .weather-widget.weather-cloudy {
+    background-color: var(--stardew-wood);
+    background-image: linear-gradient(to bottom, rgba(200, 200, 200, 0.2), rgba(145, 106, 61, 0.2));
+  }
+  
+  .weather-widget.weather-rainy {
+    background-color: var(--stardew-wood);
+    background-image: linear-gradient(to bottom, rgba(93, 188, 210, 0.2), rgba(145, 106, 61, 0.2));
+  }
+  
+  /* Weather icon styling */
+  .weather-icon {
+    animation: icon-float 3s ease-in-out infinite;
+  }
+  
+  .weather-icon.sunny {
+    color: var(--stardew-sky-sunset);
+  }
+  
+  .weather-icon.cloudy {
+    color: #e0e0e0;
+  }
+  
+  .weather-icon.rainy {
+    color: var(--stardew-water);
+  }
+  
+  /* Loading state */
+  .weather-widget.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+  }
+  
+  .weather-loading-animation {
+    width: 32px;
+    height: 32px;
+    border: 4px solid rgba(255, 250, 205, 0.3);
+    border-top: 4px solid var(--stardew-cream);
+    border-radius: 50%;
+    margin-bottom: 10px;
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Error state */
+  .weather-widget.error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--stardew-wood);
+    color: var(--stardew-danger);
+    height: 80px;
+  }
+  
+  /* Animations */
+  @keyframes icon-float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Media query for smaller screens */
+  @media (max-width: 768px) {
+    .weather-widget {
+      width: 160px;
+      padding: 8px;
+      font-size: 14px;
+    }
+    
+    .weather-header h3 {
+      font-size: 10px;
+    }
+    
+    .weather-condition {
+      font-size: 16px;
+    }
+    
+    .weather-details {
+      gap: 6px;
+    }
+    
+    .weather-forecast {
+      font-size: 12px;
+    }
+  }
