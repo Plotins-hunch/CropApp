@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy" : "http://localhost:8000",
   "dependencies": {
     "@fontsource/press-start-2p": "^5.2.5",
     "@fontsource/vt323": "^5.2.5",

@@ -1,6 +1,7 @@
 import React from 'react';
 import './styles/index.css';
-import FieldDemo from './components/FieldDemo';
+import './styles/WeatherButton.css';
+import WeatherButton from './components/WeatherButton';
 
 function App() {
   return (
@@ -10,7 +11,8 @@ function App() {
       </header>
       
       <main>
-        <FieldDemo />
+        <WeatherButton />
+        <h1> Hello World!</h1>
       </main>
       
       <footer className="mt-10 mb-6 text-center text-stardew-cream">

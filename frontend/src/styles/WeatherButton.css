@@ -1,0 +1,24 @@
+.weather-button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .weather-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .weather-button.error {
+    background-color: #ffebee;
+    color: #d32f2f;
+  }
+  
+  .weather-icon {
+    font-size: 1.2em;
+  }
