@@ -83,14 +83,14 @@
 /* Isometric field container - moved up in z-index */
 .isometric-field {
   position: absolute;
-  top: 20%;
+  top: 35%;  /* Changed from 20% to 35% to push the field down */
   left: 50%;
   width: 80%;
   height: 70%;
   transform: translateX(-50%);
   transform-style: preserve-3d;
   perspective: 1000px;
-  z-index: 3; /* Above sky but below weather effects */
+  z-index: 5;
 }
 
 /* Field grid remains the same */
@@ -106,6 +106,7 @@
   position: relative;
   z-index: 4;
   gap: 0;
+  margin: 0 auto; /* Center the grid */
 }
 
 /* Individual field tiles */

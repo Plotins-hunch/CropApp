@@ -56,7 +56,17 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weath
         gridColumn: x + 1,
         gridRow: y + 1
       }}
-      onMouseEnter={(e) => onHover({ x, y, type, moisture }, { x: e.clientX, y: e.clientY })}
+      onMouseEnter={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        onHover(
+          { x, y, type, moisture }, 
+          { 
+            x: rect.left + rect.width/2, // Center of the tile
+            y: rect.top + rect.height/2, // Center of the tile
+            tileRect: rect // Pass the whole rect for more positioning options
+          }
+        )
+      }}
       onMouseLeave={() => onHover(null, null)}
     >
       {getContent()}
@@ -223,13 +233,27 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
       {/* Weather component provides the environment */}
       <Weather type={weather} />
       
-      {/* Isometric field sits on top of the landscape */}
-      <div className="isometric-field">
+      {/* Isometric field sits on top of the landscape - centered properly and pushed down */}
+      <div className="isometric-field" style={{
+        position: 'absolute',
+        top: '35%',  /* Increased from 20% to 35% to push it down */
+        left: '50%',
+        width: '80%',
+        height: '70%',
+        transform: 'translateX(-50%)',
+        transformStyle: 'preserve-3d',
+        perspective: '1000px',
+        zIndex: 5
+      }}>
         {/* Weather effects specific to the field */}
         {renderFieldWeatherEffects()}
         
-        {/* Field grid */}
-        <div className="field-grid">
+        {/* Field grid - centered */}
+        <div className="field-grid" style={{
+          width: '100%',
+          height: '100%',
+          margin: '0 auto'
+        }}>
           {fieldLayout.map((row, y) => (
             row.map((tileType, x) => (
               <FieldTile 
@@ -254,6 +278,7 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
         <FieldTooltip 
           tile={hoveredTile} 
           position={tooltipPosition}
+          isIsometric={true} // Indicate that this is an isometric view
         />
       )}
       

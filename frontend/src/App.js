@@ -7,6 +7,8 @@ import Field from './components/Field';
 import FieldHealthDashboard from './components/FieldHealthDashboard';
 import ProductRecommendation from './components/ProductRecommendation';
 import WeatherService from './components/WeatherService';
+import TimeSlider from './components/TimeSlider';
+import FieldLegend from './components/FieldLegend';
 import { getCurrentWeather } from './services/weatherApi';
 
 // Import icons
@@ -17,6 +19,8 @@ function App() {
   const [currentWeather, setCurrentWeather] = useState('sunny');
   // State to track if biological products are applied
   const [withTreatment, setWithTreatment] = useState(false);
+  // State to track the time period (past, present, future)
+  const [timePeriod, setTimePeriod] = useState('present');
   // State to track if panels are collapsed
   const [collapsedPanels, setCollapsedPanels] = useState({
     weather: false,
@@ -49,6 +53,12 @@ function App() {
   // Toggle treatment state
   const toggleTreatment = () => {
     setWithTreatment(!withTreatment);
+  };
+  
+  // Handle time period changes from TimeSlider
+  const handleTimeChange = (newTimePeriod) => {
+    setTimePeriod(newTimePeriod);
+    console.log(`Time period changed to: ${newTimePeriod}`);
   };
 
   // Toggle panel collapsed state
@@ -178,8 +188,18 @@ function App() {
 
         {/* Main field visualization */}
         <div className="main-content">
+          {/* Time slider above field, same width as field container */}
+          <div className="time-slider-wrapper" style={{ width: '100%', marginBottom: '16px' }}>
+            <TimeSlider onTimeChange={handleTimeChange} />
+          </div>
+          
           <div className="field-container">
             <Field weather={currentWeather} withTreatment={withTreatment} />
+          </div>
+          
+          {/* Field legend above toggle controls, same width as field container */}
+          <div className="field-legend-wrapper" style={{ width: '100%', marginTop: '16px', marginBottom: '16px' }}>
+            <FieldLegend />
           </div>
           
           <div className="field-controls">
