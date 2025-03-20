@@ -72,40 +72,6 @@ const FieldDemo = () => {
         )}
       </div>
       
-      <div className="field-legend stardew-panel">
-        <h2>Field Legend</h2>
-        <div className="legend-items">
-          <div className="legend-item">
-            <div className="legend-color grass"></div>
-            <div className="legend-label">Healthy Grass</div>
-          </div>
-          <div className="legend-item">
-            <div className="legend-color water"></div>
-            <div className="legend-label">Water Source</div>
-          </div>
-          <div className="legend-item">
-            <div className="legend-color moisture-dry"></div>
-            <div className="legend-label">Dry Soil</div>
-          </div>
-          <div className="legend-item">
-            <div className="legend-color moisture-wet"></div>
-            <div className="legend-label">Well-watered Soil</div>
-          </div>
-          <div className="legend-item">
-            <div className="legend-color corn-color"></div>
-            <div className="legend-label">Corn</div>
-          </div>
-          <div className="legend-item">
-            <div className="legend-color wheat-color"></div>
-            <div className="legend-label">Wheat</div>
-          </div>
-          <div className="legend-item">
-            <div className="legend-color soybean-color"></div>
-            <div className="legend-label">Soybean</div>
-          </div>
-        </div>
-      </div>
-      
       <div className="field-insights stardew-panel">
         <h2>Current Field Insights</h2>
         <p>
@@ -254,69 +220,6 @@ const FieldDemo = () => {
           z-index: 10;
         }
         
-        .field-legend {
-          margin-bottom: 20px;
-        }
-        
-        .field-legend h2 {
-          font-size: 16px;
-          text-align: center;
-          margin-bottom: 15px;
-        }
-        
-        .legend-items {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 15px;
-        }
-        
-        .legend-item {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-        
-        .legend-color {
-          width: 24px;
-          height: 24px;
-          border: 2px solid #6e4a1f;
-        }
-        
-        .legend-color.grass {
-          background-color: #58A63C;
-        }
-        
-        .legend-color.water {
-          background-color: #5dbcd2;
-        }
-        
-        .legend-color.moisture-dry {
-          background-color: #d4b483;
-        }
-        
-        .legend-color.moisture-wet {
-          background-color: #58A63C;
-          background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h6v6H0zm12 0h6v6h-6zM0 12h6v6H0zm12 12h6v6h-6z' fill='%233e97ae' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
-        }
-        
-        .legend-color.corn-color {
-          background-color: #a9db7a;
-        }
-        
-        .legend-color.wheat-color {
-          background-color: #f9dc5c;
-        }
-        
-        .legend-color.soybean-color {
-          background-color: #a9db7a;
-          background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='2' fill='%2358A63C'/%3E%3C/svg%3E");
-        }
-        
-        .legend-label {
-          font-family: 'VT323', monospace;
-          font-size: 16px;
-        }
-        
         .field-insights {
           margin-bottom: 20px;
         }
@@ -324,7 +227,7 @@ const FieldDemo = () => {
         .field-insights h2 {
           font-size: 16px;
           text-align: center;
-          margin-bottom: A15px;
+          margin-bottom: 15px;
         }
         
         .field-insights p {

@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './styles/index.css';
 import './styles/WeatherButton.css';
 import './App.css';
 import WeatherButton from './components/WeatherButton';
 import FieldHealthDashboard from './components/FieldHealthDashboard';
 import ProductRecommendation from './components/ProductRecommendation';
+import TimeSlider from './components/TimeSlider';
+import FieldLegend from './components/FieldLegend'; // Add this import
 
 function App() {
+  const [timeState, setTimeState] = useState('present');
+  
+  const handleTimeChange = (newTimeState) => {
+    setTimeState(newTimeState);
+    console.log(`Time shifted to: ${newTimeState}`);
+    // You can pass this state to other components or fetch different data based on the time state
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -23,8 +33,10 @@ function App() {
 
       <main className="min-h-screen bg-stardew-green-dark pt-16">
         <div className="container mx-auto px-4 py-8">
-          <FieldHealthDashboard fieldId={1} />
-          <ProductRecommendation cropType="corn" />
+          <TimeSlider onTimeChange={handleTimeChange} />
+          <FieldHealthDashboard fieldId={1} timeState={timeState} />
+          <FieldLegend /> {/* Add the component here */}
+          <ProductRecommendation cropType="corn" timeState={timeState} />
         </div>
       </main>
       
