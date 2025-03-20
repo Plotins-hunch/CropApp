@@ -1,0 +1,195 @@
+/* StardewBackground.css */
+
+.stardew-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    image-rendering: pixelated;
+  }
+  
+  /* Sky with the bright blue gradient from the screenshot */
+  .stardew-sky {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    background: linear-gradient(to bottom, #4fcce9 0%, #40c0ea 40%, #7be4fa 100%);
+    z-index: 1;
+  }
+  
+  /* Clouds that match the puffy white clouds in the screenshot */
+  .stardew-clouds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    z-index: 2;
+  }
+  
+  .cloud {
+    position: absolute;
+    background-color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 20px 5px #ffffff;
+  }
+  
+  .cloud-1 {
+    top: 10%;
+    left: 5%;
+    width: 120px;
+    height: 80px;
+    animation: cloud-float 120s linear infinite;
+  }
+  
+  .cloud-2 {
+    top: 5%;
+    left: 30%;
+    width: 180px;
+    height: 100px;
+    animation: cloud-float 150s linear infinite;
+    animation-delay: -30s;
+  }
+  
+  .cloud-3 {
+    top: 15%;
+    left: 60%;
+    width: 150px;
+    height: 90px;
+    animation: cloud-float 140s linear infinite;
+    animation-delay: -70s;
+  }
+  
+  .cloud-4 {
+    top: 8%;
+    left: 80%;
+    width: 130px;
+    height: 70px;
+    animation: cloud-float 130s linear infinite;
+    animation-delay: -100s;
+  }
+  
+  /* Mountains that match the distinct pixelated mountain range */
+  .stardew-mountains {
+    position: absolute;
+    bottom: 40%;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    z-index: 3;
+  }
+  
+  .mountain-range {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 300' preserveAspectRatio='none'%3E%3Cpath d='M0,300 L50,180 L100,240 L150,150 L200,210 L250,120 L300,190 L350,100 L400,170 L450,90 L500,160 L550,80 L600,150 L650,70 L700,140 L750,60 L800,130 L850,50 L900,120 L950,40 L1000,110 L1000,300 Z' fill='%2339a24b'/%3E%3Cpath d='M0,300 L50,190 L100,250 L150,160 L200,220 L250,130 L300,200 L350,110 L400,180 L450,100 L500,170 L550,90 L600,160 L650,80 L700,150 L750,70 L800,140 L850,60 L900,130 L950,50 L1000,120 L1000,300 Z' fill='%2340be55'/%3E%3Cpath d='M0,300 L30,200 L60,240 L90,170 L120,230 L150,160 L180,220 L210,140 L240,200 L270,130 L300,190 L330,120 L360,180 L390,110 L420,170 L450,100 L480,160 L510,90 L540,150 L570,80 L600,140 L1000,140 L1000,300 Z' fill='%2346d35c'/%3E%3C/svg%3E");
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  
+  /* Fence that runs across the middle of the screen */
+  .stardew-fence {
+    position: absolute;
+    bottom: 30%;
+    left: 0;
+    width: 100%;
+    height: 32px;
+    z-index: 4;
+  }
+  
+  .fence-row {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Crect x='0' y='8' width='4' height='24' fill='%23966432'/%3E%3Crect x='14' y='8' width='4' height='24' fill='%23966432'/%3E%3Crect x='28' y='8' width='4' height='24' fill='%23966432'/%3E%3Crect x='0' y='12' width='32' height='4' fill='%23966432'/%3E%3Crect x='0' y='20' width='32' height='4' fill='%23966432'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+  }
+  
+  /* Ground layer - bright green grass */
+  .stardew-ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    background-color: #7fce25;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Ccircle cx='4' cy='4' r='1' fill='%2392e82a'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    z-index: 5;
+  }
+  
+  /* Weather effects */
+  .rain-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    z-index: 10;
+  }
+  
+  .raindrop {
+    position: absolute;
+    top: -10px;
+    width: 2px;
+    height: 10px;
+    background-color: #a2e4ff;
+    animation: stardew-rain linear infinite;
+  }
+  
+  .cloud-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(200, 200, 200, 0.2);
+    z-index: 6;
+  }
+  
+  /* Weather-specific styles */
+  .stardew-background.cloudy .stardew-sky {
+    background: linear-gradient(to bottom, #92b4d2 0%, #abc7e0 50%, #c4d4e8 100%);
+  }
+  
+  .stardew-background.rainy .stardew-sky {
+    background: linear-gradient(to bottom, #677c96 0%, #8497ad 50%, #a3b0c2 100%);
+  }
+  
+  .stardew-background.rainy .stardew-mountains,
+  .stardew-background.rainy .stardew-ground,
+  .stardew-background.rainy .stardew-fence {
+    filter: brightness(0.85) saturate(0.9);
+  }
+  
+  /* Animations */
+  @keyframes cloud-float {
+    0% { transform: translateX(-10%); }
+    100% { transform: translateX(110%); }
+  }
+  
+  @keyframes stardew-rain {
+    0% {
+      transform: translateY(0) rotate(20deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(300px) rotate(20deg);
+      opacity: 0;
+    }
+  }

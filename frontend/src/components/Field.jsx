@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import '../styles/Field.css';
-import { SunIcon, CloudIcon, CloudRainIcon } from 'lucide-react';
+import Weather from './Weather';
 
-const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile }) => {
+const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weather }) => {
   const getContent = () => {
     switch (type) {
       case 'corn':
@@ -34,8 +34,13 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile }) => 
     }
   };
 
-  // Check if this tile is on the edge of the field
-  let tileClasses = `field-tile ${type} ${moisture} ${isHovered ? 'hovered' : ''}`;
+  // Apply weather-specific classes to tiles
+  let tileClasses = `field-tile ${type} ${moisture || ''} ${isHovered ? 'hovered' : ''}`;
+  
+  // Add weather effect classes
+  if (weather === 'rainy') tileClasses += ' rain-effect';
+  if (weather === 'sunny' && moisture === 'dry') tileClasses += ' sun-effect';
+  
   if (isEdgeTile) tileClasses += ' edge-tile';
 
   return (
@@ -49,6 +54,11 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile }) => 
       onMouseLeave={() => onHover(null)}
     >
       {getContent()}
+      
+      {/* Field tiles with rain puddles - only show in rainy weather and not on water tiles */}
+      {weather === 'rainy' && type !== 'water' && Math.random() > 0.85 && (
+        <div className="rain-puddle"></div>
+      )}
       
       {/* For edge tiles, add visible soil sides based on isometric perspective */}
       {isEdgeTile && (
@@ -115,36 +125,43 @@ const Field = ({ weather = 'sunny' }) => {
     return x === 0 || y === 11;
   };
 
-  const renderWeatherEffects = () => {
+  // Render specific weather effects directly on the field
+  const renderFieldWeatherEffects = () => {
     switch(weather) {
       case 'rainy':
         return (
-          <div className="weather-effects rain">
-            {Array.from({ length: 40 }).map((_, i) => (
+          <div className="field-weather rainy-field">
+            {/* Field-level rain */}
+            {Array.from({ length: 30 }).map((_, i) => (
               <div 
-                key={i} 
-                className="raindrop" 
+                key={`field-rain-${i}`} 
+                className="field-raindrop" 
                 style={{
                   left: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 2}s`,
-                  animationDuration: `${0.5 + Math.random() * 1}s`
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 1.5}s`
                 }}
               />
             ))}
           </div>
         );
-      case 'cloudy':
-        return (
-          <div className="weather-effects clouds">
-            <div className="cloud" style={{ left: '10%', top: '20%' }}><CloudIcon size={48} /></div>
-            <div className="cloud" style={{ left: '40%', top: '10%' }}><CloudIcon size={64} /></div>
-            <div className="cloud" style={{ left: '70%', top: '15%' }}><CloudIcon size={56} /></div>
-          </div>
-        );
       case 'sunny':
         return (
-          <div className="weather-effects sunny">
-            <div className="sun"><SunIcon size={64} /></div>
+          <div className="field-weather sunny-field">
+            {/* Heat shimmer effect */}
+            <div className="heat-shimmer"></div>
+            
+            {/* Light rays */}
+            <div className="light-ray ray1"></div>
+            <div className="light-ray ray2"></div>
+          </div>
+        );
+      case 'cloudy':
+        return (
+          <div className="field-weather cloudy-field">
+            {/* Cloud shadows moving across the field */}
+            <div className="cloud-shadow shadow1"></div>
+            <div className="cloud-shadow shadow2"></div>
           </div>
         );
       default:
@@ -194,15 +211,15 @@ const Field = ({ weather = 'sunny' }) => {
   };
 
   return (
-    <div className="field-container">
-      {/* Sky background */}
-      <div className={`sky ${weather}`}></div>
+    <div className={`field-container ${weather}-weather`}>
+      {/* Weather component provides the environment */}
+      <Weather type={weather} />
       
-      {/* Weather effects */}
-      {renderWeatherEffects()}
-      
-      {/* Field layout */}
+      {/* Isometric field sits on top of the landscape */}
       <div className="isometric-field">
+        {/* Weather effects specific to the field */}
+        {renderFieldWeatherEffects()}
+        
         {/* Field grid */}
         <div className="field-grid">
           {fieldLayout.map((row, y) => (
@@ -216,6 +233,7 @@ const Field = ({ weather = 'sunny' }) => {
                 onHover={handleTileHover}
                 isHovered={hoveredTile && hoveredTile.x === x && hoveredTile.y === y}
                 isEdgeTile={isEdgeTile(x, y)}
+                weather={weather}
               />
             ))
           ))}
