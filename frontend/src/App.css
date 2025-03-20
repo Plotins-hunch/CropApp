@@ -14,14 +14,13 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: #3D7D27;
+  min-height: 80px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(10px + 1vmin);
   color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .App-link {
@@ -35,4 +34,18 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.weather-wrapper {
+  position: relative;
+  width: 100%;
+  height: 0; /* Change to 0 to prevent extra space */
+  padding: 1rem;
+}
+
+.weather-wrapper > * {
+  position: absolute;
+  right: 20px;
+  top: 20px; /* Adjust this value to control distance from header */
+  z-index: 10;
 }
