@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Field.css';
 import Weather from './Weather';
 import FieldTooltip from './FieldTooltip';
+import FarmerAdvisor from './FarmerAdvisor'; // Import the FarmerAdvisor component
 
 const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weather, withTreatment = false }) => {
   const getContent = () => {
@@ -308,6 +309,13 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
           </div>
         )}
       </div>
+      
+      {/* Add the FarmerAdvisor component at the bottom left */}
+      <FarmerAdvisor 
+        weather={weather} 
+        cropType={hoveredTile?.type || "corn"} 
+        withTreatment={withTreatment} 
+      />
     </div>
   );
 };

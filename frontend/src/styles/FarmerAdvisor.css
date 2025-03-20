@@ -1,0 +1,278 @@
+/* FarmerAdvisor.css - Fixed positioning without affecting the Almanac modal */
+
+/* Basic positioning for the farmer wrapper */
+.farmer-advisor-wrapper {
+    position: absolute;
+    left: 40px;
+    bottom: 80px;
+    z-index: 20;
+    pointer-events: all;
+  }
+  
+  /* Container for farmer and speech bubble */
+  .farmer-advisor-container {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+  }
+  
+  /* Farmer character styling */
+  .farmer-character {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    z-index: 12;
+  }
+  
+  .farmer-character:hover {
+    transform: translateY(-3px);
+  }
+  
+  /* Temporary CSS-based farmer representation */
+  .farmer-image-temp {
+    width: 48px;
+    height: 96px;
+    position: relative;
+    overflow: hidden;
+    filter: drop-shadow(2px 4px 0px rgba(0, 0, 0, 0.2));
+  }
+  
+  .farmer-body {
+    position: absolute;
+    width: 30px;
+    height: 45px;
+    background-color: #3d85c6; /* Blue overalls */
+    bottom: 20px;
+    left: 9px;
+    border-radius: 6px 6px 0 0;
+  }
+  
+  .farmer-head {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background-color: #ffcc99; /* Skin tone */
+    top: 20px;
+    left: 12px;
+    border-radius: 12px;
+  }
+  
+  .farmer-hair {
+    position: absolute;
+    width: 28px;
+    height: 18px;
+    background-color: #e69138; /* Orange hair */
+    top: 14px;
+    left: 10px;
+    border-radius: 14px 14px 0 0;
+  }
+  
+  .farmer-hat {
+    position: absolute;
+    width: 32px;
+    height: 8px;
+    background-color: #b45f06; /* Brown hat */
+    top: 12px;
+    left: 8px;
+    border-radius: 2px;
+  }
+  
+  .farmer-hat:after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 8px;
+    background-color: #b45f06; /* Brown hat */
+    top: -8px;
+    left: 6px;
+    border-radius: 10px 10px 0 0;
+  }
+  
+  .farmer-eyes {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background-color: #333333; /* Dark eyes */
+    top: 30px;
+    border-radius: 2px;
+  }
+  
+  .farmer-eyes.left {
+    left: 16px;
+  }
+  
+  .farmer-eyes.right {
+    left: 24px;
+  }
+  
+  .farmer-mouth {
+    position: absolute;
+    width: 6px;
+    height: 2px;
+    background-color: #333333; /* Dark mouth */
+    top: 37px;
+    left: 19px;
+  }
+  
+  .farmer-arm {
+    position: absolute;
+    width: 6px;
+    height: 30px;
+    background-color: #ffcc99; /* Skin tone */
+    bottom: 30px;
+  }
+  
+  .farmer-arm.left {
+    left: 4px;
+    transform: rotate(10deg);
+  }
+  
+  .farmer-arm.right {
+    right: 4px;
+    transform: rotate(-10deg);
+  }
+  
+  .farmer-legs {
+    position: absolute;
+    width: 10px;
+    height: 20px;
+    background-color: #b45f06; /* Brown boots */
+    bottom: 0;
+  }
+  
+  .farmer-legs.left {
+    left: 12px;
+  }
+  
+  .farmer-legs.right {
+    right: 12px;
+  }
+  
+  /* Character hover state */
+  .farmer-character.hovered .farmer-mouth {
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+  }
+  
+  .farmer-image {
+    width: 48px;
+    height: 96px;
+    object-fit: contain;
+    filter: drop-shadow(2px 4px 0px rgba(0, 0, 0, 0.2));
+  }
+  
+  .farmer-interaction-hint {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.6);
+    color: var(--stardew-cream, #fffacd);
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-family: 'VT323', monospace;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  .farmer-character:hover .farmer-interaction-hint {
+    opacity: 1;
+  }
+  
+  .speech-bubble {
+    position: relative;
+    background-color: var(--stardew-cream, #fffacd);
+    border: 3px solid var(--stardew-wood-dark, #6e4a1f);
+    border-radius: 8px;
+    padding: 10px;
+    margin-left: 10px; /* Space between farmer and bubble */
+    margin-bottom: 50px; /* Space to align with farmer's face */
+    min-width: 180px;
+    max-width: 250px;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: var(--stardew-text-dark, #513718);
+  }
+  
+  .speech-bubble:before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 70%; /* Adjusted to align with farmer's face */
+    transform: translateY(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent var(--stardew-wood-dark, #6e4a1f) transparent transparent;
+  }
+  
+  .speech-bubble:after {
+    content: '';
+    position: absolute;
+    left: -11px;
+    top: 70%; /* Match the before element */
+    transform: translateY(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent var(--stardew-cream, #fffacd) transparent transparent;
+  }
+  
+  .speech-bubble.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .speech-bubble p {
+    margin: 0;
+    line-height: 1.3;
+  }
+  
+  /* Keyframes for bobbing animation */
+  @keyframes bobbing {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+  }
+  
+  .farmer-character.hovered .farmer-image,
+  .farmer-character.hovered .farmer-image-temp {
+    animation: bobbing 1.5s ease-in-out infinite;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 1024px) {
+    .farmer-advisor-wrapper {
+      bottom: 60px;
+      left: 40px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .farmer-advisor-wrapper {
+      bottom: 50px;
+      left: 30px;
+      transform: scale(0.9);
+      transform-origin: bottom left;
+    }
+    
+    .speech-bubble {
+      min-width: 150px;
+      font-size: 14px;
+      padding: 8px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .farmer-advisor-wrapper {
+      bottom: 40px;
+      left: 20px;
+      transform: scale(0.8);
+    }
+  }

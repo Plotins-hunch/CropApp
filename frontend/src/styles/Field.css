@@ -785,3 +785,45 @@
   background-color: var(--stardew-dirt);
   background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 4h4v4H0V4zm8 0h4v4H8V4zm8 0h4v4h-4V4z' fill='%238a6837' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
 }
+
+/* When the FarmerAdvisor is placed inside the field container, it will appear at bottom left */
+.farmer-advisor-container {
+  position: absolute;
+  bottom: 30px;
+  left: 40px;
+  z-index: 10;
+  pointer-events: all; /* Ensure clickability */
+}
+
+/* Make sure speech bubble hovers above field elements */
+.speech-bubble {
+  z-index: 12;
+}
+
+/* Ensure the farmer character is visible above field elements */
+.farmer-character {
+  z-index: 15;
+}
+
+/* Adjust for different screen sizes */
+@media (max-width: 1024px) {
+  .farmer-advisor-container {
+    bottom: 20px;
+    left: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .farmer-advisor-container {
+    bottom: 15px;
+    left: 15px;
+    transform: scale(0.9);
+    transform-origin: bottom left;
+  }
+}
+
+@media (max-width: 480px) {
+  .farmer-advisor-container {
+    transform: scale(0.8);
+  }
+}
