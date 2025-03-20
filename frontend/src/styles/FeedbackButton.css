@@ -1,0 +1,122 @@
+.feedback-container {
+  position: relative;
+}
+
+.feedback-button {
+  background-color: #58A63C;
+  padding: 10px 20px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+}
+
+.feedback-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.feedback-modal {
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 25px;
+  position: relative;
+  animation: modal-appear 0.3s ease-out forwards;
+}
+
+@keyframes modal-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feedback-title {
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 20px;
+  color: #fffacd;
+  margin-bottom: 25px;
+  text-shadow: 2px 2px 0 #3D7D27;
+}
+
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: #fffacd;
+}
+
+.form-group textarea, 
+.form-group input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 3px solid #6e4a1f;
+  background-color: #fffacd;
+  color: #513718;
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.form-group textarea:focus, 
+.form-group input:focus {
+  outline: none;
+  border-color: #f5a442;
+  box-shadow: 0 0 0 2px rgba(245, 164, 66, 0.3);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.cancel-button {
+  background-color: #916a3d;
+  color: #fffacd;
+}
+
+.submit-button {
+  background-color: #3D7D27;
+  color: #fffacd;
+}
+
+@media (max-width: 768px) {
+  .feedback-modal {
+    width: 95%;
+    padding: 15px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .form-actions button {
+    width: 100%;
+  }
+}

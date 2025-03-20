@@ -185,7 +185,19 @@ def get_drought_risk(date: str, lat: float, lon: float):
 
 @router.get("/soildata/{date}/{lat}/{lon}")
 def get_drought_risk(date: str, lat: float, lon: float):
-    adjdate = date + "T+00:00/" + date + "T+00:00"
+
+    year, month, day = map(str, date.split('-'))
+    month = int(month)
+    month = (month +1) % 12
+
+    if month >= 10:
+        month = str(month)
+    else:
+        month = "0" + str(month)
+
+    adjdate = date + "T+00:00/" + str(year) + "-" + month + "-" + str(day) + "T+00:00"
+
+
     print(adjdate)
 
     params = {
@@ -208,6 +220,7 @@ def get_drought_risk(date: str, lat: float, lon: float):
              "timeResolution": "daily",
              "codes": [
                  {"code": 11, "level": "2 m above gnd", "aggregation": "mean"},
+
                  #{"code": 52, "level": "2 m above gnd"},
                  #{"code": 157, "level": "180-0 mb above gnd"}
               ]
@@ -229,8 +242,73 @@ def get_drought_risk(date: str, lat: float, lon: float):
     #soil_moisture = data.get("data", {}).get("153", {}).get("value", "N/A")
     #soil_temperature = data.get("data", {}).get("139", {}).get("value", "N/A")
 
+    avr_temperature = sum(temperature) / len(temperature) if len(temperature) > 0 else 0
+
+
     return {
-        "temperature": temperature
+        "average_temperature": avr_temperature
+        #"soil_moisture": soil_moisture,
+        #"soil_temperature": soil_temperature
+    }
+
+@router.get("/soil/data/{date}/{lat}/{lon}")
+def get_drought_risk(date: str, lat: float, lon: float):
+
+    year, month, day = map(str, date.split('-'))
+    month = int(month)
+    month = (month +1) % 12
+
+    if month >= 10:
+        month = str(month)
+    else:
+        month = "0" + str(month)
+
+    adjdate = date + "T+00:00/" + str(year) + "-" + month + "-" + str(day) + "T+00:00"
+
+
+    print(adjdate)
+
+    params = {
+         "units": {
+             "temperature": "C",
+             "velocity": "km/h",
+             "length": "metric",
+             "energy": "watts"
+         },
+         "geometry": {
+             "type": "MultiPoint",
+             "coordinates": [[lat,lon]]
+         },
+         "format": "json",
+         "timeIntervals": [
+             adjdate
+         ],
+         "queries": [{
+            "domain": "WISE30",
+            "timeResolution": "static",
+            "codes": [ { "code": 812, "level": "aggregated" } ]
+         }],
+         #"apikey": HISTORICAL_API
+     }
+
+    response = requests.post(SYNGENTA_HISTORICAL_API , json=params)
+    print(response.text)
+
+    if response.status_code != 200:
+            return {"error": "Erddaten konnten nicht abgerufen werden."}
+
+    data = response.json()
+
+    print(data)
+    # Extrahiere relevante Werte
+    ph = data[0]["codes"][0]["dataPerTimeInterval"][0]["data"][0]
+    #soil_moisture = data.get("data", {}).get("153", {}).get("value", "N/A")
+    #soil_temperature = data.get("data", {}).get("139", {}).get("value", "N/A")
+
+
+
+    return {
+        "ph": ph
         #"soil_moisture": soil_moisture,
         #"soil_temperature": soil_temperature
     }
