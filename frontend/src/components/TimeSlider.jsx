@@ -1,11 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../styles/TimeSlider.css';
+import { useTime } from '../context/TimeContext';
 
 const TimeSlider = ({ onTimeChange }) => {
   const [sliderValue, setSliderValue] = useState(50); // 0-100 range (0=past, 50=present, 100=future)
-  const [timeState, setTimeState] = useState('present');
   const [snapToPresent, setSnapToPresent] = useState(false);
   const sliderRef = useRef(null);
+  
+  // Get time context
+  const { updateYear, updateTimePeriod } = useTime();
+  
+  // Calculate the year based on slider value
+  const calculateYear = () => {
+    const today = new Date();
+    // Calculate year offset (-10 to +10 years)
+    const yearOffset = Math.round((sliderValue - 50) / 50 * 10);
+    
+    return today.getFullYear() + yearOffset;
+  };
   
   // Update timeState based on sliderValue
   useEffect(() => {
@@ -16,25 +28,19 @@ const TimeSlider = ({ onTimeChange }) => {
       newTimeState = 'future';
     }
     
-    if (newTimeState !== timeState) {
-      setTimeState(newTimeState);
-      if (onTimeChange) {
-        onTimeChange(newTimeState);
-      }
+    // Update the time context
+    const year = calculateYear();
+    updateYear(year);
+    updateTimePeriod(newTimeState);
+    
+    // Call callback if provided
+    if (onTimeChange) {
+      onTimeChange(newTimeState);
     }
     
     // Set snapToPresent flag when very close to present
     setSnapToPresent(sliderValue >= 48 && sliderValue <= 52);
-  }, [sliderValue, timeState, onTimeChange]);
-  
-  // Calculate the year based on slider value
-  const calculateYear = () => {
-    const today = new Date();
-    // Calculate year offset (-10 to +10 years)
-    const yearOffset = Math.round((sliderValue - 50) / 50 * 10);
-    
-    return today.getFullYear() + yearOffset;
-  };
+  }, [sliderValue, onTimeChange, updateTimePeriod, updateYear]);
   
   // Handle slider change
   const handleSliderChange = (e) => {
@@ -56,15 +62,6 @@ const TimeSlider = ({ onTimeChange }) => {
     if (snapToPresent) {
       setSliderValue(50); // Snap to exact present
     }
-  };
-  
-  // Icon based on time period - keeping this function in case it's needed elsewhere
-  const getTimeIcon = () => {
-    if (sliderValue < 40) return '🕰️'; // Deep past
-    if (sliderValue < 48) return '📜'; // Recent past
-    if (sliderValue <= 52) return '📆'; // Present
-    if (sliderValue < 70) return '🔮'; // Near future
-    return '🚀'; // Far future
   };
 
   return (

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Field.css';
 import Weather from './Weather';
 import FieldTooltip from './FieldTooltip';
-import FarmerAdvisor from './FarmerAdvisor'; // Import the FarmerAdvisor component
+import FarmerAdvisor from './FarmerAdvisor';
+import { useTime } from '../context/TimeContext';
 
 const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weather, withTreatment = false }) => {
   const getContent = () => {
@@ -58,12 +59,11 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weath
         gridRow: y + 1
       }}
       onMouseEnter={(e) => {
-        // Use mouse coordinates directly instead of tile position
         onHover(
           { x, y, type, moisture }, 
           { 
-            x: e.clientX, // Use the mouse X position
-            y: e.clientY  // Use the mouse Y position
+            x: e.clientX,
+            y: e.clientY
           }
         );
       }}
@@ -96,6 +96,16 @@ const FieldTile = ({ type, x, y, moisture, onHover, isHovered, isEdgeTile, weath
 const Field = ({ weather = 'sunny', withTreatment = false }) => {
   const [hoveredTile, setHoveredTile] = useState(null);
   const [tooltipPosition, setTooltipPosition] = useState(null);
+  
+  // Use time context
+  const { currentYear, timePeriod, getWeatherData, getSoilData } = useTime();
+  
+  // Get current weather and soil data based on year
+  const yearWeather = getWeatherData(currentYear);
+  const soilData = getSoilData(currentYear);
+  
+  // Use prop weather if provided, otherwise use from year data
+  const displayWeather = weather || yearWeather.type;
   
   // Define field layout with rows and columns
   const fieldLayout = [
@@ -132,15 +142,39 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
       ['', '', '', '', '', '', '', '', '', '', '', ''],
     ];
     
-    // For rainy weather, reduce dry areas
-    if (weather === 'rainy') {
+    // Adjust moisture map based on year
+    if (currentYear < 2020) {
+      // Past: More wet areas (wetter climate in the past)
+      return baseMoistureMap.map(row => 
+        row.map(cell => cell === 'dry' ? '' : cell)
+      );
+    } else if (currentYear > 2027) {
+      // Far future: More dry areas (climate change effects)
+      return baseMoistureMap.map((row, y) => 
+        row.map((cell, x) => {
+          if (y > 6 && cell === '') return 'dry';
+          return cell;
+        })
+      );
+    } else if (currentYear > 2025) {
+      // Near future: Some additional dry areas
+      return baseMoistureMap.map((row, y) => 
+        row.map((cell, x) => {
+          if (y > 8 && x > 2 && x < 10 && cell === '') return 'dry';
+          return cell;
+        })
+      );
+    }
+    
+    // For rainy weather in current year, reduce dry areas
+    if (displayWeather === 'rainy') {
       return baseMoistureMap.map(row => 
         row.map(cell => cell === 'dry' ? '' : cell)
       );
     }
     
-    // For sunny weather, increase dry areas unless treatment is applied
-    if (weather === 'sunny' && !withTreatment) {
+    // For sunny weather in current year, increase dry areas unless treatment is applied
+    if (displayWeather === 'sunny' && !withTreatment) {
       return baseMoistureMap.map((row, y) => 
         row.map((cell, x) => {
           // Add more dry areas during sunny weather
@@ -153,8 +187,8 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
       );
     }
     
-    // For sunny weather with treatment, improve some dry areas
-    if (weather === 'sunny' && withTreatment) {
+    // For sunny weather with treatment in current year, improve some dry areas
+    if (displayWeather === 'sunny' && withTreatment) {
       return baseMoistureMap.map((row, y) => 
         row.map((cell, x) => {
           // Treatment helps some dry areas
@@ -186,7 +220,7 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
 
   // Render specific weather effects directly on the field
   const renderFieldWeatherEffects = () => {
-    switch(weather) {
+    switch(displayWeather) {
       case 'rainy':
         return (
           <div className="field-weather rainy-field">
@@ -228,15 +262,45 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
     }
   };
 
+  // Get soil moisture description
+  const getSoilMoistureDescription = () => {
+    if (displayWeather === 'rainy') {
+      return withTreatment ? 'High (optimal)' : 'High';
+    } else if (displayWeather === 'sunny' && !withTreatment) {
+      return soilData.moisture < 50 ? 'Low (critical)' : 'Low';
+    } else {
+      return withTreatment ? 'Good' : 'Medium';
+    }
+  };
+  
+  // Get risk description
+  const getRiskDescription = () => {
+    if (displayWeather === 'sunny' && !withTreatment) {
+      return "Drought";
+    } else if (displayWeather === 'rainy' && !withTreatment) {
+      return "Waterlogging";
+    } else if (currentYear > 2027) {
+      return "Climate Change";
+    } else {
+      return "Low";
+    }
+  };
+  
+  // Is the risk critical?
+  const isRiskCritical = () => {
+    return (displayWeather === 'sunny' && !withTreatment) || 
+           (currentYear > 2027 && !withTreatment);
+  };
+
   return (
-    <div className={`field-container ${weather}-weather`}>
+    <div className={`field-container ${displayWeather}-weather`}>
       {/* Weather component provides the environment */}
-      <Weather type={weather} />
+      <Weather type={displayWeather} />
       
       {/* Isometric field sits on top of the landscape - centered properly and pushed down */}
       <div className="isometric-field" style={{
         position: 'absolute',
-        top: '35%',  /* Increased from 20% to 35% to push it down */
+        top: '35%',
         left: '50%',
         width: '80%',
         height: '70%',
@@ -265,7 +329,7 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
                 onHover={handleTileHover}
                 isHovered={hoveredTile && hoveredTile.x === x && hoveredTile.y === y}
                 isEdgeTile={isEdgeTile(x, y)}
-                weather={weather}
+                weather={displayWeather}
                 withTreatment={withTreatment}
               />
             ))
@@ -278,7 +342,8 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
         <FieldTooltip 
           tile={hoveredTile} 
           position={tooltipPosition}
-          isIsometric={true} // Indicate that this is an isometric view
+          isIsometric={true}
+          year={currentYear}
         />
       )}
       
@@ -287,20 +352,18 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
         <h2>Your Field Status</h2>
         <div className="status-item">
           <span className="status-label">Weather:</span>
-          <span className="status-value">{weather.charAt(0).toUpperCase() + weather.slice(1)}</span>
+          <span className="status-value">{displayWeather.charAt(0).toUpperCase() + displayWeather.slice(1)}</span>
         </div>
         <div className="status-item">
           <span className="status-label">Soil Moisture:</span>
           <span className="status-value">
-            {weather === 'rainy' ? 'High' : 
-             weather === 'sunny' && !withTreatment ? 'Low' : 'Medium'}
+            {getSoilMoistureDescription()}
           </span>
         </div>
         <div className="status-item">
           <span className="status-label">Risk:</span>
-          <span className={`status-value ${weather === 'sunny' && !withTreatment ? 'warning' : ''}`}>
-            {weather === 'sunny' && !withTreatment ? 'Drought' : 
-             weather === 'rainy' && !withTreatment ? 'Waterlogging' : 'Low'}
+          <span className={`status-value ${isRiskCritical() ? 'warning' : ''}`}>
+            {getRiskDescription()}
           </span>
         </div>
         {withTreatment && (
@@ -308,13 +371,25 @@ const Field = ({ weather = 'sunny', withTreatment = false }) => {
             <span>✓ Biological Products Applied</span>
           </div>
         )}
+        
+        {/* Time indicator */}
+        {currentYear !== 2025 && (
+          <div className="time-indicator">
+            {currentYear < 2025 ? (
+              <div className="historical-data-note">Historical data ({currentYear})</div>
+            ) : (
+              <div className="forecast-data-note">Forecast data ({currentYear})</div>
+            )}
+          </div>
+        )}
       </div>
       
       {/* Add the FarmerAdvisor component at the bottom left */}
       <FarmerAdvisor 
-        weather={weather} 
+        weather={displayWeather} 
         cropType={hoveredTile?.type || "corn"} 
-        withTreatment={withTreatment} 
+        withTreatment={withTreatment}
+        year={currentYear}
       />
     </div>
   );

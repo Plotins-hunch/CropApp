@@ -1,29 +1,41 @@
 import React from 'react';
 import '../styles/FieldHealthDashboard.css';
+import { useTime } from '../context/TimeContext';
 
 function FieldHealthDashboard() {
-  // Hardcoded data for the three risks
+  // Use time context to get current year and risk values
+  const { currentYear, getRiskValues } = useTime();
+  
+  // Get risk values based on current year
+  const risks = getRiskValues(currentYear);
+  
+  // Format risk values into display data
+  const getRiskStatus = (value, max) => {
+    const percentage = (value / max) * 100;
+    if (percentage >= 70) return { status: 'HIGH', statusType: 'critical' };
+    if (percentage >= 40) return { status: 'MEDIUM', statusType: 'warning' };
+    return { status: 'LOW', statusType: 'good' };
+  };
+
+  // Create risk data for display
   const riskData = [
     {
       icon: "🌵",
       label: "Drought Risk",
-      value: "7/10",
-      status: "HIGH",
-      statusType: "critical"
+      value: `${risks.drought}/10`,
+      ...getRiskStatus(risks.drought, 10)
     },
     {
       icon: "🌡️",
       label: "Heat Risk",
-      value: "5/9",
-      status: "MEDIUM",
-      statusType: "warning"
+      value: `${risks.heat}/9`,
+      ...getRiskStatus(risks.heat, 9)
     },
     {
       icon: "🌾",
       label: "Yield Risk",
-      value: "35%",
-      status: "MEDIUM",
-      statusType: "warning"
+      value: `${risks.yield}%`,
+      ...getRiskStatus(100 - risks.yield, 100)
     }
   ];
 
@@ -49,6 +61,16 @@ function FieldHealthDashboard() {
           </div>
         ))}
       </div>
+      
+      {currentYear !== 2025 && (
+        <div className="year-specific-warning">
+          {currentYear < 2025 ? (
+            <p className="historical-note">Historical data from {currentYear}</p>
+          ) : (
+            <p className="prediction-note">Predicted data for {currentYear}</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

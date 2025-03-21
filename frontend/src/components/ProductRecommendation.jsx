@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/ProductRecommendation.css';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTime } from '../context/TimeContext';
 
 const ProductRecommendation = ({ fieldId = 1, cropType = "corn", lat = 47.5596, lon = 7.5886 }) => {
   const [products, setProducts] = useState([
-    { id: 1, name: "Stress Buster", effectiveness: 0, description: "Helps plants withstand extreme temperature conditions", icon: "🌡️", loading: false },
-    { id: 2, name: "Yield Booster", effectiveness: 0, description: "Increases crop yield even in challenging conditions", icon: "🌾", loading: false },
-    { id: 3, name: "Nutrient Plus", effectiveness: 0, description: "Enhances nutrient uptake and overall plant health", icon: "🌱", loading: false }
+    { id: 1, name: "Stress Buster", effectiveness: 0, description: "Helps plants withstand extreme temperature conditions", icon: "🌡️", loading: false, type: "stress-buster" },
+    { id: 2, name: "Yield Booster", effectiveness: 0, description: "Increases crop yield even in challenging conditions", icon: "🌾", loading: false, type: "yield-booster" },
+    { id: 3, name: "Nutrient Plus", effectiveness: 0, description: "Enhances nutrient uptake and overall plant health", icon: "🌱", loading: false, type: "nutrient-plus" }
   ]);
   const [comparing, setComparing] = useState(false);
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  
+  // Get time context
+  const { currentYear, timePeriod, getProductEffectiveness } = useTime();
 
+  // Compare all products using time context
   const compareAll = async () => {
     try {
       setComparing(true);
@@ -20,41 +25,34 @@ const ProductRecommendation = ({ fieldId = 1, cropType = "corn", lat = 47.5596, 
       // Update all products to loading state
       setProducts(products.map(product => ({ ...product, loading: true })));
       
-      // Get current date in YYYY-MM-DD format
-      const today = new Date().toISOString().split('T')[0];
-      
-      // Make parallel API calls for each product
-      const [stressBusterRes, yieldBoosterRes, nutrientPlusRes] = await Promise.all([
-        fetch(`/api/product-comparison/stress-buster/${cropType}/${today}/${lat}/${lon}`),
-        fetch(`/api/product-comparison/yield-booster/${cropType}/${today}/${lat}/${lon}`),
-        fetch(`/api/product-comparison/nutrient-plus/${cropType}/${today}/${lat}/${lon}`)
-      ]);
-      
-      // Check for any failed responses
-      if (!stressBusterRes.ok || !yieldBoosterRes.ok || !nutrientPlusRes.ok) {
-        throw new Error("Failed to fetch product comparison data");
-      }
-      
-      // Parse JSON responses
-      const stressBusterData = await stressBusterRes.json();
-      const yieldBoosterData = await yieldBoosterRes.json();
-      const nutrientPlusData = await nutrientPlusRes.json();
-      
-      // Update state with fetched data
-      setProducts([
-        { ...products[0], effectiveness: stressBusterData.effectiveness || 0, loading: false },
-        { ...products[1], effectiveness: yieldBoosterData.effectiveness || 0, loading: false },
-        { ...products[2], effectiveness: nutrientPlusData.effectiveness || 0, loading: false }
-      ]);
+      // Short timeout to simulate API call
+      setTimeout(() => {
+        // Get effectiveness for each product based on current year
+        const updatedProducts = products.map(product => ({
+          ...product,
+          effectiveness: getProductEffectiveness(currentYear, product.type),
+          loading: false
+        }));
+        
+        setProducts(updatedProducts);
+        setComparing(false);
+      }, 1000);
     } catch (err) {
       console.error("Error comparing products:", err);
-      setError(err.message);
+      setError(err.message || "Failed to get product data");
       // Reset loading state on error
       setProducts(products.map(product => ({ ...product, loading: false })));
-    } finally {
       setComparing(false);
     }
   };
+
+  // Update product effectiveness when year changes
+  useEffect(() => {
+    // Only update if effectiveness values are already set
+    if (products.some(p => p.effectiveness > 0)) {
+      compareAll();
+    }
+  }, [currentYear]);
 
   const resetComparison = () => {
     setProducts(products.map(product => ({ ...product, effectiveness: 0 })));
@@ -150,6 +148,17 @@ const ProductRecommendation = ({ fieldId = 1, cropType = "corn", lat = 47.5596, 
           </button>
         )}
       </div>
+      
+      {/* Add time-specific message */}
+      {timePeriod !== 'present' && (
+        <div className="time-period-note">
+          {timePeriod === 'past' ? (
+            <p>Showing historical effectiveness from {currentYear}</p>
+          ) : (
+            <p>Showing predicted effectiveness for {currentYear}</p>
+          )}
+        </div>
+      )}
     </div>
   );
 };
