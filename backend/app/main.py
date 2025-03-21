@@ -23,6 +23,9 @@ app.add_middleware(
 # Include legacy routes
 app.include_router(legacy_router)
 
+# Include AI recommendation routes
+app.include_router(ai_router, prefix="/ai", tags=["ai"])
+
 if __name__ == "__main__":
     import uvicorn
     # Run the application with automatic reload enabled
