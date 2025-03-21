@@ -6,87 +6,88 @@ from datetime import datetime
 
 class Database:
     def __init__(self, db_file="agri_recommendations.db"):
-        # Check if the database file exists
-        db_exists = os.path.isfile(db_file)
-        
         # Connect to database
         self.conn = sqlite3.connect(db_file)
         self.conn.row_factory = sqlite3.Row  # Return rows as dictionaries
         
-        # Create tables if they don't exist
-        if not db_exists:
-            self._create_tables()
+        # Check if tables exist and create if needed
+        self._ensure_tables_exist()
     
-    def _create_tables(self):
-        """Create database tables"""
+    def _ensure_tables_exist(self):
+        """Check if tables exist and create them if they don't"""
         cursor = self.conn.cursor()
         
-        # Farmers table
-        cursor.execute('''
-        CREATE TABLE farmers (
-            id INTEGER PRIMARY KEY,
-            name TEXT,
-            location TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        ''')
+        # Get list of existing tables
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        existing_tables = [row['name'] for row in cursor.fetchall()]
         
-        # Fields table
-        cursor.execute('''
-        CREATE TABLE fields (
-            id INTEGER PRIMARY KEY,
-            farmer_id INTEGER,
-            name TEXT,
-            latitude REAL,
-            longitude REAL,
-            crop_type TEXT,
-            size_hectares REAL,
-            soil_quality INTEGER,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (farmer_id) REFERENCES farmers (id)
-        )
-        ''')
+        # Create any missing tables
+        if 'farmers' not in existing_tables:
+            cursor.execute('''
+            CREATE TABLE farmers (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                location TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            ''')
         
-        # Recommendations table
-        cursor.execute('''
-        CREATE TABLE recommendations (
-            id INTEGER PRIMARY KEY,
-            field_id INTEGER,
-            date TEXT,
-            context TEXT,  # JSON string with risk values
-            recommended_product TEXT,
-            confidence REAL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (field_id) REFERENCES fields (id)
-        )
-        ''')
+        if 'fields' not in existing_tables:
+            cursor.execute('''
+            CREATE TABLE fields (
+                id INTEGER PRIMARY KEY,
+                farmer_id INTEGER,
+                name TEXT,
+                latitude REAL,
+                longitude REAL,
+                crop_type TEXT,
+                size_hectares REAL,
+                soil_quality INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (farmer_id) REFERENCES farmers (id)
+            )
+            ''')
         
-        # Feedback table
-        cursor.execute('''
-        CREATE TABLE feedback (
-            id INTEGER PRIMARY KEY,
-            recommendation_id INTEGER,
-            rating INTEGER,  # 1-10 scale
-            notes TEXT,
-            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (recommendation_id) REFERENCES recommendations (id)
-        )
-        ''')
+        if 'recommendations' not in existing_tables:
+            cursor.execute('''
+            CREATE TABLE recommendations (
+                id INTEGER PRIMARY KEY,
+                field_id INTEGER,
+                date TEXT,
+                context TEXT,  -- JSON string with risk values
+                recommended_product TEXT,
+                confidence REAL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (field_id) REFERENCES fields (id)
+            )
+            ''')
         
-        # Model parameters table
-        cursor.execute('''
-        CREATE TABLE model_parameters (
-            id INTEGER PRIMARY KEY,
-            context_type TEXT,  # heat_stress, frost_stress, etc.
-            product TEXT,       # StressBuster, YieldBooster, etc.
-            alpha REAL,
-            beta REAL,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        ''')
+        if 'feedback' not in existing_tables:
+            cursor.execute('''
+            CREATE TABLE feedback (
+                id INTEGER PRIMARY KEY,
+                recommendation_id INTEGER,
+                rating INTEGER,  -- 1-10 scale
+                notes TEXT,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (recommendation_id) REFERENCES recommendations (id)
+            )
+            ''')
         
-        # Insert initial model parameters based on prior knowledge
-        self._initialize_model_parameters()
+        if 'model_parameters' not in existing_tables:
+            cursor.execute('''
+            CREATE TABLE model_parameters (
+                id INTEGER PRIMARY KEY,
+                context_type TEXT,  -- heat_stress, frost_stress, etc.
+                product TEXT,       -- StressBuster, YieldBooster, etc.
+                alpha REAL,
+                beta REAL,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            ''')
+            
+            # Initialize model parameters for the newly created table
+            self._initialize_model_parameters()
         
         self.conn.commit()
     

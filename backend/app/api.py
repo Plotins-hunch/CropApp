@@ -5,10 +5,10 @@ from typing import Optional, Dict, Any, List
 from datetime import date, datetime
 import json
 
-from risk_models import RiskCalculator
-from recommender import ThompsonSamplingRecommender
-from forecaster import RiskForecaster
-from database import Database
+from app.risk_models import RiskCalculator
+from app.recommender import ThompsonSamplingRecommender
+from app.forecaster import RiskForecaster
+from app.database import Database
 
 # Initialize router
 router = APIRouter()

@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import router as legacy_router
-from api import router as ai_router
+from app.api import router as ai_router
 
 app = FastAPI(title="Biological Products Recommendation API")
 
