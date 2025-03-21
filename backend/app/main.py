@@ -1,13 +1,15 @@
-# app/main.py
+# main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import router
+from app.routes import router as legacy_router
+from api import router as ai_router
 
-app = FastAPI(title="Hackathon API")
+app = FastAPI(title="Biological Products Recommendation API")
 
-# Set up CORS to allow requests from the React app running on localhost:3000
+# Set up CORS to allow requests from the frontend
 origins = [
     "http://localhost:3000",
+    "http://localhost:5173",  # If using Vite
 ]
 
 app.add_middleware(
@@ -18,11 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include your API routes
-app.include_router(router)
+# Include legacy routes
+app.include_router(legacy_router)
 
 if __name__ == "__main__":
     import uvicorn
-    # Run the application with automatic reload enabled for development
+    # Run the application with automatic reload enabled
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
-

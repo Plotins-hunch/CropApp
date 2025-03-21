@@ -3,3 +3,6 @@ uvicorn
 sqlalchemy
 databases[sqlite]
 requests
+numpy 
+scipy 
+pandas
